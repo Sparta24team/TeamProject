@@ -3,20 +3,16 @@ package camp;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 /**
- * Notification
- * Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다.
- * main 메서드를 실행하면 프로그램이 실행됩니다.
- * model 의 클래스들과 아래 (// 기능 구현...) 주석 부분을 완성해주세요!
- * 프로젝트 구조를 변경하거나 기능을 추가해도 괜찮습니다!
- * 구현에 도움을 주기위한 Base 프로젝트입니다. 자유롭게 이용해주세요!
+ * Notification Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다. main 메서드를 실행하면 프로그램이 실행됩니다. model 의 클래스들과 아래 (// 기능 구현...) 주석 부분을 완성해주세요! 프로젝트 구조를 변경하거나 기능을
+ * 추가해도 괜찮습니다! 구현에 도움을 주기위한 Base 프로젝트입니다. 자유롭게 이용해주세요!
  */
 public class CampManagementApplication {
+
     // 데이터 저장소
     private static List<Student> studentStore;
     private static List<Subject> subjectStore;
@@ -38,6 +34,7 @@ public class CampManagementApplication {
     private static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
+        System.out.println(scoreIndex);
         setInitData();
         try {
             displayMainView();
@@ -215,10 +212,116 @@ public class CampManagementApplication {
 
     // 수강생의 과목별 시험 회차 및 점수 등록
     private static void createScore() {
-        String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        System.out.println("시험 점수를 등록합니다...");
-        // 기능 구현
+        System.out.println("시험 점수를 등록합니다.");
+        System.out.println("관리할 수강생의 번호를 입력하세요.");
+        String studentId = sc.next();
+        validateStudentId(studentId);
+
+        System.out.println("관리할 과목의 번호를 입력하세요.");
+        String subjectId = sc.next();
+        validateSubjectId(subjectId);
+
+        System.out.println("등록할 회차를 입력하세요.");
+        int round = sc.nextInt();
+        validateRound(round);
+
+        System.out.println("등록할 점수를 입력하세요.");
+        int scoreValue = sc.nextInt();
+        validateScoreValue(scoreValue);
+
+        if (existsScore(subjectId, round)) {
+            throw new IllegalArgumentException("과목의 회차 점수는 중복되어 등록될 수 없습니다.");
+        }
+
+        String grade = calculateGrade(subjectId, scoreValue);
+
+        System.out.println("시험 점수를 등록합니다.");
+        Score score = new Score(sequence(INDEX_TYPE_SCORE), subjectId, studentId, round, scoreValue, grade);
+        scoreStore.add(score);
+        System.out.println();
+        System.out.printf("%s번 수강생 %s 과목 %d회차 %d점수 등록 성공!\n", studentId, subjectId, round, scoreValue);
+
         System.out.println("\n점수 등록 성공!");
+    }
+
+    private static void validateStudentId(String studentId) {
+        boolean isNoneMatch = studentStore.stream()
+                .noneMatch(student -> student.getStudentId().equals(studentId));
+        if (isNoneMatch) {
+            throw new IllegalArgumentException("존재하지 않는 수강생 ID입니다.");
+        }
+    }
+
+    private static void validateSubjectId(String subjectId) {
+        boolean isNoneMatch = subjectStore.stream()
+                .noneMatch(subject -> subject.getSubjectId().equals(subjectId));
+        if (isNoneMatch) {
+            throw new IllegalArgumentException("존재하지 않는 과목 ID입니다.");
+        }
+    }
+
+    private static void validateRound(int round) {
+        if (round < 1 || 10 < round) {
+            throw new IllegalArgumentException("회차는 10 초과 및 1 미만의 수가 될 수 없습니다. (회차 범위: 1 ~ 10)");
+        }
+    }
+
+    private static void validateScoreValue(int scoreValue) {
+        if (scoreValue < 0 || 100 < scoreValue) {
+            throw new IllegalArgumentException("점수는 100 초과 및 음수가 될 수 없습니다. (점수 범위: 0 ~ 100)");
+        }
+    }
+
+    private static boolean existsScore(String subjectId, int round) {
+        return scoreStore.stream()
+                .anyMatch(score -> score.getSubjectId().equals(subjectId) && score.getRound() == round);
+    }
+
+    private static String calculateGrade(String subjectId, int scoreValue) {
+        Subject subject = subjectStore.stream()
+                .filter(s -> s.getSubjectId().equals(subjectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목 ID입니다."));
+
+        String subjectType = subject.getSubjectType();
+        if (SUBJECT_TYPE_MANDATORY.equals(subjectType)) {
+            if (scoreValue >= 95) {
+                return "A";
+            }
+            if (scoreValue >= 90) {
+                return "B";
+            }
+            if (scoreValue >= 80) {
+                return "C";
+            }
+            if (scoreValue >= 70) {
+                return "D";
+            }
+            if (scoreValue >= 60) {
+                return "F";
+            }
+            return "N";
+        }
+        if (SUBJECT_TYPE_CHOICE.equals(subjectType)) {
+            if (scoreValue >= 90) {
+                return "A";
+            }
+            if (scoreValue >= 80) {
+                return "B";
+            }
+            if (scoreValue >= 70) {
+                return "C";
+            }
+            if (scoreValue >= 60) {
+                return "D";
+            }
+            if (scoreValue >= 50) {
+                return "F";
+            }
+            return "N";
+        }
+
+        throw new IllegalStateException("유효하지 않은 과목 타입입니다.");
     }
 
     // 수강생의 과목별 회차 점수 수정
