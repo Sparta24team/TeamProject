@@ -39,4 +39,8 @@ public class Score {
     public String getGrade(){
         return grade;
     }
+
+    public int getScoreValue() {
+        return value;
+    }
 }
