@@ -449,12 +449,14 @@ public class CampManagementApplication {
             }
         }
         //필수 과목 점수 데이터 없는 경우
+        Student student = new Student("ST001", "Sample Student", "Green"); // 임시코드
+
         if (studentScoreCount == 0) {
-            System.out.println("수강생 이름: %s, 필수 과목 점수 데이터가 없습니다.%n");
+            System.out.printf("수강생 이름: %s, 필수 과목 점수 데이터가 없습니다.%n", student.getStudentName());
         } else {
             int averageScore = studentTotalScore / studentScoreCount; //평균 점수 계산
             String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore); // 평균 점수로 등급 계산
-            System.out.printf("수강생 이름: %s, 필수 과목 평균 등급: %s%n", averageGrade);
+            System.out.printf("수강생 이름: %s, 필수 과목 평균 등급: %s%n", student.getStudentName(), averageGrade);
         }
 
         System.out.println("\n등급 조회 완료!");
