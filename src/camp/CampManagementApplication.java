@@ -3,6 +3,7 @@ package camp;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -324,13 +325,35 @@ public class CampManagementApplication {
         throw new IllegalStateException("유효하지 않은 과목 타입입니다.");
     }
 
-    // 수강생의 과목별 회차 점수 수정
+    // 수강생의 과목별 회차 점수 수정     set
     private static void updateRoundScoreBySubject() {
+        System.out.println("수강생 고유번호를 입력해 주세요");
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (수정할 과목 및 회차, 점수)
+        // 기능 구현 (수정할 과목 및 회차, 점수);
+        System.out.println("수정할 과목을 입력해주세요");
+        String subjectId = sc.next();   //과목
+        System.out.println("수정할 회차를 입력해주세요");
+        int round = sc.nextInt();       //회차
+        System.out.println("수정할 점수를 입력해주세요");
+        int value = sc.nextInt();       //점수
+
+        boolean hasScores = false;
         System.out.println("시험 점수를 수정합니다...");
+        System.out.println("==================================");
         // 기능 구현
-        System.out.println("\n점수 수정 성공!");
+        for (Score score : scoreStore) {
+            if (score.getStudentId().equals(studentId) && score.getSubjectId().equals(subjectId)){
+                score.setRound(round);
+                score.setValue(value);
+                hasScores =true;
+            }
+        }
+        if(!hasScores){
+            System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
+        }else {
+            System.out.println("\n점수 수정 성공!");
+        }
+
     }
 
     // 수강생의 특정 과목 회차별 등급 조회
