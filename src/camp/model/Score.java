@@ -30,4 +30,13 @@ public class Score {
     public String getSubjectId() {
         return subjectId;
     }
+
+    public String  getStudentId() {
+        return studentId;
+    }
+
+
+    public String getGrade(){
+        return grade;
+    }
 }

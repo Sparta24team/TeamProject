@@ -170,6 +170,7 @@ public class CampManagementApplication {
 
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
         // 기능 구현
+        studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
 
@@ -336,10 +337,29 @@ public class CampManagementApplication {
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (조회할 특정 과목)
-        System.out.println("회차별 등급을 조회합니다...");
-        // 기능 구현
-        System.out.println("\n등급 조회 성공!");
-    }
 
+        //과목 ID 입력 받기
+        System.out.println("조회할 과목의 고유 번호를 입력하세요 : ");
+        String subjectId = sc.next();
+
+        System.out.println("회차별 등급을 조회합니다...");
+        System.out.println("==================================");
+
+        boolean hasScores = false;
+
+        for(Score score : scoreStore) {
+            if (score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId)) {
+                hasScores = true;
+                System.out.printf("회차 = %d%n 등급 = %s%n",
+                        score.getRound(),score.getGrade());
+                System.out.println("==================================");
+            }
+        }
+
+        if (!hasScores) {
+            System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
+        }
+
+        System.out.println("\n등급 조회 완료!");
+    }
 }
