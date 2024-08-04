@@ -1,5 +1,5 @@
 package camp.model;
-
+import java.util.*;
 public class Student {
     private String studentId;
     private String studentName;
@@ -17,5 +17,4 @@ public class Student {
     public String getStudentName() {
         return studentName;
     }
-
 }
