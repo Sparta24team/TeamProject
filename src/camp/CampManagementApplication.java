@@ -171,7 +171,8 @@ public class CampManagementApplication {
         System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
         String status = sc.next();
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, status); // 수강생 인스턴스 생성 예시 코드
+        List<Subject> subjects = new ArrayList<>();
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, subjects, status); // 수강생 인스턴스 생성 예시 코드
 
         // 기능 구현
         studentStore.add(student);
@@ -365,18 +366,32 @@ public class CampManagementApplication {
     }
 
     // 수강생의 특정 과목 회차별 등급 조회
+    // 코드 순서 변경 : 수강생 ID, 과목 ID 유효성 각각 조회로 변경함
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
+
+        //수강생 ID 유효성 검사
+        Student student = getStudentById(studentId);
+        if (student == null) {
+            System.out.println("존재하지 않는 수강생 ID 입니다.");
+            return;
+        }
 
         //과목 ID 입력 받기
         System.out.println("조회할 과목의 고유 번호를 입력하세요 : ");
         String subjectId = sc.next();
 
+        // 과목 ID 유효성 검사
+        Subject subject = getSubjectById(subjectId);
+        if (subject == null) {
+            System.out.println("존재하지 않는 과목 ID입니다.");
+            return;
+        }
+
         System.out.println("회차별 등급을 조회합니다...");
         System.out.println("==================================");
 
         boolean hasScores = false;
-
         for(Score score : scoreStore) {
             if (score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId)) {
                 hasScores = true;
@@ -397,14 +412,19 @@ public class CampManagementApplication {
     private static void inquireStudentAverageGrade() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
 
+        Student student = getStudentById(studentId);
+        if (student == null) {
+            System.out.println("존재하지 않는 수강생 ID입니다.");
+            return;
+        }
+
         System.out.println("과목별 평균 등급을 조회합니다...");
         System.out.println("==================================");
 
         boolean hasScores = false; //수강생이 점수 가지고 있는지 추적
-
-        for (Subject subject : subjectStore) {
-            int totalScore = 0; //현재 과목의 점수 합계 초기화
-            int scoreCount = 0; //현재 과목의 점수 개수 초기화
+        for (Subject subject : subjectStore) { // 모든 과목을 참조
+            int totalScore = 0; // 현재 과목의 점수 합계 초기화
+            int scoreCount = 0; // 현재 과목의 점수 개수 초기화
 
             //점수 데이터 순환
             for (Score score : scoreStore) {
@@ -436,52 +456,65 @@ public class CampManagementApplication {
         System.out.print("조회할 상태를 입력하세요 (Green, Red, Yellow): ");
         String status = sc.next(); // 조회할 수강생 상태 status 저장
 
-        Set<String> eligibleStudentIds = new HashSet<>(); // 적격 수강생 ID를 저장할 집합
+        List<Student> eligibleStudents = new ArrayList<>(); // 적격 수강생 ID를 저장할 집합
 
         // 수강생 목록을 순회하며 상태가 일치하는 수강생의 ID를 수집
         for (Student student : studentStore) {
             if (student.getStatus().equalsIgnoreCase(status)) {
-                eligibleStudentIds.add(student.getStudentId());
+                eligibleStudents.add(student);
             }
         }
+        // 적격 수강생이 없을 경우
+        if (eligibleStudents.isEmpty()) {
+            System.out.println("해당 상태의 수강생이 없습니다.");
+            return;
+        }
 
-        int studentTotalScore = 0; //필수과목점수 합계
-        int studentScoreCount = 0; //필수과목점수 개수
+        int totalScore = 0;
+        int scoreCount = 0;
 
         // 필수 과목 점수 합산
-        for (Student student : studentStore) {
-            if (eligibleStudentIds.contains(student.getStudentId())) { //studentStore 에 ID가 포함 되어 있는지 확인
-
-                for (Score score : scoreStore) { //scoreStore Id와 일치하는 점수 확인
-                    if (score.getStudentId().equals(student.getStudentId())) {
-                        Subject foundSubject = null;
-
-                        for (Subject subject : subjectStore) { //subject 현재 점수의 과목 ID와 일치, 필수 과목 확인
-                            if (subject.getSubjectId().equals(score.getSubjectId()) &&
-                                    subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
-                                foundSubject = subject;
-                                break; // 조건을 만족하는 첫 번째 과목을 찾으면 중단
-                            }
-                        }
-                        if (foundSubject != null) {
-                            studentTotalScore += score.getScoreValue(); //필수 과목의 점수를 합산
-                            studentScoreCount++; //필수 과목 점수의 개수 +1
+        for (Student student : eligibleStudents) {
+            for (Subject subject : student.getSubjects()) {
+                if (subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
+                    for (Score score : scoreStore) {
+                        if (score.getStudentId().equals(student.getStudentId()) && score.getSubjectId().equals(subject.getSubjectId())) {
+                            totalScore += score.getScoreValue();
+                            scoreCount++;
                         }
                     }
                 }
             }
         }
         //필수 과목 점수 데이터 없는 경우
-        Student student = new Student("ST001", "Sample Student", "Green"); // 임시코드
-
-        if (studentScoreCount == 0) {
-            System.out.printf("수강생 이름: %s, 필수 과목 점수 데이터가 없습니다.%n", student.getStudentName());
+        if (scoreCount == 0) {
+            System.out.println("필수 과목 점수 데이터가 없습니다.");
         } else {
-            int averageScore = studentTotalScore / studentScoreCount; //평균 점수 계산
-            String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore); // 평균 점수로 등급 계산
-            System.out.printf("수강생 이름: %s, 필수 과목 평균 등급: %s%n", student.getStudentName(), averageGrade);
+            int averageScore = totalScore / scoreCount;
+            String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore);
+            System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
         }
 
         System.out.println("\n등급 조회 완료!");
+    }
+
+    //수강생 ID에 해당하는 수강생 반환
+    private static Student getStudentById(String studentId) {
+        for (Student student : studentStore) {
+            if (student.getStudentId().equals(studentId)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    //주어진 과목 ID에 해당하는 과목 반환
+    private static Subject getSubjectById(String subjectId) {
+        for (Subject subject : subjectStore) {
+            if (subject.getSubjectId().equals(subjectId)) {
+                return subject;
+            }
+        }
+        return null;
     }
 }
