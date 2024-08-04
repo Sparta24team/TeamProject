@@ -41,5 +41,10 @@ public class Score {
     public String getStudentId(){
         return studentId;
     }
+    public int getValue(){
+        return value;
+    }
 
 }
+
+
