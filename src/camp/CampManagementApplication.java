@@ -35,10 +35,13 @@ public class CampManagementApplication {
     public static void main(String[] args) {
         System.out.println(scoreIndex);
         setInitData();
-        try {
-            displayMainView();
-        } catch (Exception e) {
-            System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
+        while (true) {
+            try {
+                displayMainView();
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
+            }
         }
     }
 
@@ -169,8 +172,17 @@ public class CampManagementApplication {
         // 기능 구현 (필수 과목, 선택 과목)
 
         //상태값 테스트 코드
-        System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
-        String status = sc.next();
+        String status = "";
+        boolean validStatus = false;
+        while (!validStatus) {
+            System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
+            status = sc.next().trim();
+            if (status.equalsIgnoreCase("Green") || status.equalsIgnoreCase("Red") || status.equalsIgnoreCase("Yellow")) {
+                validStatus = true;
+            } else {
+                System.out.println("잘못된 상태입니다. 다시 입력해주세요.");
+            }
+        }
 
 
 
@@ -223,6 +235,7 @@ public class CampManagementApplication {
         }
 
         // 기능 구현
+        student.setSubjects(selectSubjects);
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
@@ -307,8 +320,8 @@ public class CampManagementApplication {
         int scoreValue = sc.nextInt();
         validateScoreValue(scoreValue);
 
-        if (existsScore(subjectId, round)) {
-            throw new IllegalArgumentException("과목의 회차 점수는 중복되어 등록될 수 없습니다.");
+        if (existsScore(studentId, subjectId, round)) {
+            throw new IllegalArgumentException("과목의 회차 점수 는 중복되어 등록될 수 없습니다.");
         }
 
         String grade = calculateGrade(subjectId, scoreValue);
@@ -361,9 +374,11 @@ public class CampManagementApplication {
                 .noneMatch(score -> score.getSubjectId().equals(subjectId)&&score.getStudentId().equals(studentId) && score.getRound() == round);
     }
 
-    private static boolean existsScore(String subjectId, int round) {
+    private static boolean existsScore(String studentId, String subjectId, int round) {
         return scoreStore.stream()
-                .anyMatch(score -> score.getSubjectId().equals(subjectId) && score.getRound() == round);
+                .anyMatch(score -> score.getSubjectId().equals(subjectId) &&
+                        score.getRound() == round &&
+                        score.getStudentId() == studentId);
     }
 
     private static String calculateGrade(String subjectId, int scoreValue) {
@@ -424,9 +439,9 @@ public class CampManagementApplication {
         while(!valueFg) {
             studentId = getStudentId(); // 관리할 수강생 고유 번호
 
-            if (validateScoreStudentId(studentId)){
+            if (validateScoreStudentId(studentId)) {
                 System.out.println("존재하지 않은 수강생입니다.");
-            }else{
+            } else {
                 valueFg = true;
             }
         }
@@ -570,7 +585,7 @@ public class CampManagementApplication {
     private static void inquireMandatoryGrades() {
         System.out.println("특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
         System.out.print("조회할 상태를 입력하세요 (Green, Red, Yellow): ");
-        String status = sc.next(); // 조회할 수강생 상태 status 저장
+        String status = sc.next().trim(); // 조회할 수강생 상태 status 저장
 
         List<Student> eligibleStudents = new ArrayList<>(); // 적격 수강생 ID를 저장할 집합
 
@@ -589,29 +604,59 @@ public class CampManagementApplication {
         int totalScore = 0;
         int scoreCount = 0;
 
+        Map<String, List<Integer>> studentScoresMap = new HashMap<>();
+
         // 필수 과목 점수 합산
         for (Student student : eligibleStudents) {
-            for (Subject subject : student.getSubjects()) {
+            List<Integer> studentScores = new ArrayList<>();
+            for (Subject subject : subjectStore) {
                 if (subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
                     for (Score score : scoreStore) {
                         if (score.getStudentId().equals(student.getStudentId()) && score.getSubjectId().equals(subject.getSubjectId())) {
                             totalScore += score.getScoreValue();
                             scoreCount++;
+                            studentScores.add(score.getScoreValue());
                         }
                     }
                 }
             }
+            studentScoresMap.put(student.getStudentId(), studentScores);
         }
         //필수 과목 점수 데이터 없는 경우
         if (scoreCount == 0) {
             System.out.println("필수 과목 점수 데이터가 없습니다.");
         } else {
-            int averageScore = totalScore / scoreCount;
-            String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore);
-            System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
+            try {
+                int averageScore = totalScore / scoreCount;
+                String averageGrade = calculateGradeForScore(averageScore);
+                System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
+                for (Map.Entry<String, List<Integer>> entry : studentScoresMap.entrySet()) { // 수정햇슈
+                    System.out.printf("수강생 ID: %s, 점수: %s%n", entry.getKey(), entry.getValue()); // 수정햇슈
+                }
+            } catch (Exception e) {
+                System.out.println("등급 계산 중 오류 발생: " + e.getMessage());
+            }
         }
-
         System.out.println("\n등급 조회 완료!");
+    }
+    // 점수를 위한 등급 계산 메서드 추가
+    private static String calculateGradeForScore(int scoreValue) {
+        if (scoreValue >= 95) {
+            return "A";
+        }
+        if (scoreValue >= 90) {
+            return "B";
+        }
+        if (scoreValue >= 80) {
+            return "C";
+        }
+        if (scoreValue >= 70) {
+            return "D";
+        }
+        if (scoreValue >= 60) {
+            return "F";
+        }
+        return "N";
     }
 
     //수강생 ID에 해당하는 수강생 반환
