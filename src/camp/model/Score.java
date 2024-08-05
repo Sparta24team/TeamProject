@@ -34,17 +34,24 @@ public class Score {
     }
 
     public String getSubjectId() {
-
+      
         return subjectId;
     }
 
-    public String getStudentId(){
+    public String getStudentId() {
         return studentId;
     }
     public int getValue(){
         return value;
     }
 
+    public String getGrade(){
+        return grade;
+    }
+
+    public int getScoreValue() {
+        return value;
+    }
 }
 
 
