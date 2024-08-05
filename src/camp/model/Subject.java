@@ -1,18 +1,19 @@
 package camp.model;
 
 public class Subject {
-    private String subjectId;
-    private String subjectName;
-    private String subjectType;     //과목 타입 (필수,선택)
 
-    public Subject(String seq, String subjectName, String subjectType) {
-        this.subjectId = seq;
+    private String subjectId;
+    private final String subjectName;
+    private final String subjectType;
+
+    public Subject(String subjectName, String subjectType) {
         this.subjectName = subjectName;
         this.subjectType = subjectType;
     }
 
-    // Getter
-    public String getSubjectId() { return subjectId; }
+    public String getSubjectId() {
+        return subjectId;
+    }
 
     public String getSubjectName() {
         return subjectName;
@@ -22,4 +23,7 @@ public class Subject {
         return subjectType;
     }
 
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
+    }
 }
