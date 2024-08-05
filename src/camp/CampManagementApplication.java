@@ -484,13 +484,16 @@ public class CampManagementApplication {
                     score.getSubjectId().equals(subjectId)&&
                             score.getRound() == round)){
                 score.setValue(value);
-                System.out.println("사용자 id: "+ score.getStudentId());
-                System.out.println("과목  id: "+ score.getSubjectId());
-                System.out.println("회차    : "+ score.getRound());
-                System.out.println("점수    : "+ score.getValue());
-                System.out.println("==============================");
+
                 break;
             }
+        }
+        for (Score score : scoreStore) {
+            System.out.println("사용자 id: " + score.getStudentId());
+            System.out.println("과목  id: " + score.getSubjectId());
+            System.out.println("회차    : " + score.getRound());
+            System.out.println("점수    : " + score.getValue());
+            System.out.println("==============================");
         }
         System.out.println("\n점수 수정 성공!");
 

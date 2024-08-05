@@ -26,9 +26,14 @@ public class Score {
     public void setRound(int round){
         this.round = round;
     }
+//    public void setValue(int value){
+//        this.value = value;
+//    }
     public void setValue(int value){
-        this.value = value;
+      this.value = value;
+      this.grade = calculateGrade(value);
     }
+
     public int getRound() {
         return round;
     }
@@ -52,6 +57,21 @@ public class Score {
     public int getScoreValue() {
         return value;
     }
+    private String calculateGrade(int value) {
+        // 점수에 따른 등급 계산 로직
+        if (value >= 90) {
+            return "A";
+        } else if (value >= 80) {
+            return "B";
+        } else if (value >= 70) {
+            return "C";
+        } else if (value >= 60) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+
 }
 
 
