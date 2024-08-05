@@ -3,9 +3,7 @@ package camp;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Notification Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다. main 메서드를 실행하면 프로그램이 실행됩니다. model 의 클래스들과 아래 (// 기능 구현...) 주석 부분을 완성해주세요! 프로젝트 구조를 변경하거나 기능을
@@ -168,6 +166,12 @@ public class CampManagementApplication {
         String studentName = sc.next();
         // 기능 구현 (필수 과목, 선택 과목)
 
+        //상태값 테스트 코드
+        System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
+        String status = sc.next();
+
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, status); // 수강생 인스턴스 생성 예시 코드
+
         List<Subject> selectSubjects = new ArrayList<>();
         //필수 선택 과목 3,2개 이상인지 확인하기 위한 변수
         int mandatoryCount = 0;
@@ -217,7 +221,7 @@ public class CampManagementApplication {
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
-    // 중복 확인 
+    // 중복 확인
     private static boolean isDuplicate(List<Subject> subjects, Subject subject) {
         for (Subject s : subjects) {
             if (s.getSubjectId().equals(subject.getSubjectId())) {
@@ -243,7 +247,9 @@ public class CampManagementApplication {
             System.out.println("1. 수강생의 과목별 시험 회차 및 점수 등록");
             System.out.println("2. 수강생의 과목별 회차 점수 수정");
             System.out.println("3. 수강생의 특정 과목 회차별 등급 조회");
-            System.out.println("4. 메인 화면 이동");
+            System.out.println("4. 특정 상태 수강생들의 필수 과목 평균 등급 조회");
+            System.out.println("5. 수강생의 과목별 평균 등급 조회");
+            System.out.println("6. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
             int input = sc.nextInt();
 
@@ -251,7 +257,9 @@ public class CampManagementApplication {
                 case 1 -> createScore(); // 수강생의 과목별 시험 회차 및 점수 등록
                 case 2 -> updateRoundScoreBySubject(); // 수강생의 과목별 회차 점수 수정
                 case 3 -> inquireRoundGradeBySubject(); // 수강생의 특정 과목 회차별 등급 조회
-                case 4 -> flag = false; // 메인 화면 이동
+                case 4 -> inquireMandatoryGrades(); // 특정 상태 수강생들의 필수 과목 평균 등급 조회
+                case 5 -> inquireStudentAverageGrade(); // 수강생의 과목별 평균 등급 조회
+                case 6 -> flag = false; // 메인 화면 이동
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
                     flag = false;
@@ -391,10 +399,121 @@ public class CampManagementApplication {
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (조회할 특정 과목)
+
+        //과목 ID 입력 받기
+        System.out.println("조회할 과목의 고유 번호를 입력하세요 : ");
+        String subjectId = sc.next();
+
         System.out.println("회차별 등급을 조회합니다...");
-        // 기능 구현
-        System.out.println("\n등급 조회 성공!");
+        System.out.println("==================================");
+
+        boolean hasScores = false;
+
+        for(Score score : scoreStore) {
+            if (score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId)) {
+                hasScores = true;
+                System.out.printf("회차 = %d%n 등급 = %s%n",
+                        score.getRound(),score.getGrade());
+                System.out.println("==================================");
+            }
+        }
+
+        if (!hasScores) {
+            System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
+        }
+
+        System.out.println("\n등급 조회 완료!");
     }
 
+    // 수강생의 과목별 평균 등급 조회
+    private static void inquireStudentAverageGrade() {
+        String studentId = getStudentId(); // 관리할 수강생 고유 번호
+
+        System.out.println("과목별 평균 등급을 조회합니다...");
+        System.out.println("==================================");
+
+        boolean hasScores = false; //수강생이 점수 가지고 있는지 추적
+
+        for (Subject subject : subjectStore) {
+            int totalScore = 0; //현재 과목의 점수 합계 초기화
+            int scoreCount = 0; //현재 과목의 점수 개수 초기화
+
+            //점수 데이터 순환
+            for (Score score : scoreStore) {
+                if (score.getStudentId().equals(studentId) && score.getSubjectId().equals(subject.getSubjectId())) {
+                    totalScore += score.getScoreValue(); //점수 합산
+                    scoreCount++; //점수 개수 증가
+                    hasScores = true;
+                }
+            }
+
+            if (scoreCount > 0) {
+                // 평균 점수를 계산 => 등급 계산
+                int averageScore = totalScore / scoreCount;
+                String averageGrade = calculateGrade(subject.getSubjectId(), averageScore);
+                System.out.printf("과목: %s, 평균 등급: %s%n", subject.getSubjectName(), averageGrade);
+            }
+        }
+
+        if (!hasScores) {
+            System.out.println("해당 수강생에 대한 점수 데이터가 없습니다.");
+        }
+
+        System.out.println("\n평균 등급 조회 완료!");
+    }
+
+    // 특정 상태 수강생들의 필수 과목 평균 등급 조회
+    private static void inquireMandatoryGrades() {
+        System.out.println("특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
+        System.out.print("조회할 상태를 입력하세요 (Green, Red, Yellow): ");
+        String status = sc.next(); // 조회할 수강생 상태 status 저장
+
+        Set<String> eligibleStudentIds = new HashSet<>(); // 적격 수강생 ID를 저장할 집합
+
+        // 수강생 목록을 순회하며 상태가 일치하는 수강생의 ID를 수집
+        for (Student student : studentStore) {
+            if (student.getStatus().equalsIgnoreCase(status)) {
+                eligibleStudentIds.add(student.getStudentId());
+            }
+        }
+
+        int studentTotalScore = 0; //필수과목점수 합계
+        int studentScoreCount = 0; //필수과목점수 개수
+
+        // 필수 과목 점수 합산
+        for (Student student : studentStore) {
+            if (eligibleStudentIds.contains(student.getStudentId())) { //studentStore 에 ID가 포함 되어 있는지 확인
+
+                for (Score score : scoreStore) { //scoreStore Id와 일치하는 점수 확인
+                    if (score.getStudentId().equals(student.getStudentId())) {
+                        Subject foundSubject = null;
+
+                        for (Subject subject : subjectStore) { //subject 현재 점수의 과목 ID와 일치, 필수 과목 확인
+                            if (subject.getSubjectId().equals(score.getSubjectId()) &&
+                                    subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
+                                foundSubject = subject;
+                                break; // 조건을 만족하는 첫 번째 과목을 찾으면 중단
+                            }
+                        }
+                        if (foundSubject != null) {
+                            studentTotalScore += score.getScoreValue(); //필수 과목의 점수를 합산
+                            studentScoreCount++; //필수 과목 점수의 개수 +1
+                        }
+                    }
+                }
+            }
+        }
+        //필수 과목 점수 데이터 없는 경우
+        Student student = new Student("ST001", "Sample Student", "Green"); // 임시코드
+
+        if (studentScoreCount == 0) {
+            System.out.printf("수강생 이름: %s, 필수 과목 점수 데이터가 없습니다.%n", student.getStudentName());
+        } else {
+            int averageScore = studentTotalScore / studentScoreCount; //평균 점수 계산
+            String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore); // 평균 점수로 등급 계산
+            System.out.printf("수강생 이름: %s, 필수 과목 평균 등급: %s%n", student.getStudentName(), averageGrade);
+        }
+
+        System.out.println("\n등급 조회 완료!");
+    }
 }
