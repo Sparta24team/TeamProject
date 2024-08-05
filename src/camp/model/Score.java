@@ -41,6 +41,9 @@ public class Score {
     public String getStudentId() {
         return studentId;
     }
+    public int getValue(){
+        return value;
+    }
 
     public String getGrade(){
         return grade;
@@ -50,3 +53,5 @@ public class Score {
         return value;
     }
 }
+
+

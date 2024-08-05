@@ -217,7 +217,7 @@ public class CampManagementApplication {
 
     private static String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
-        return sc.next();
+        return sc.next().trim();
     }
 
     // 수강생의 과목별 시험 회차 및 점수 등록
@@ -275,11 +275,22 @@ public class CampManagementApplication {
             throw new IllegalArgumentException("회차는 10 초과 및 1 미만의 수가 될 수 없습니다. (회차 범위: 1 ~ 10)");
         }
     }
-
     private static void validateScoreValue(int scoreValue) {
         if (scoreValue < 0 || 100 < scoreValue) {
             throw new IllegalArgumentException("점수는 100 초과 및 음수가 될 수 없습니다. (점수 범위: 0 ~ 100)");
         }
+    }
+    public static boolean validateScoreStudentId(String studentId){
+        return scoreStore.stream()
+                .noneMatch(student -> student.getStudentId().equals(studentId));
+    }
+    public static boolean validateScoreSubjectId(String studentId,String subjectId){
+        return scoreStore.stream()
+                .noneMatch(score -> score.getSubjectId().equals(subjectId)&&score.getStudentId().equals(studentId));
+    }
+    public static boolean validateScoreRound(String studentId,String subjectId, int round){
+        return scoreStore.stream()
+                .noneMatch(score -> score.getSubjectId().equals(subjectId)&&score.getStudentId().equals(studentId) && score.getRound() == round);
     }
 
     private static boolean existsScore(String subjectId, int round) {
@@ -336,32 +347,69 @@ public class CampManagementApplication {
 
     // 수강생의 과목별 회차 점수 수정     set
     private static void updateRoundScoreBySubject() {
-        System.out.println("수강생 고유번호를 입력해 주세요");
-        String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (수정할 과목 및 회차, 점수);
-        System.out.println("수정할 과목을 입력해주세요");
-        String subjectId = sc.next();   //과목
-        System.out.println("수정할 회차를 입력해주세요");
-        int round = sc.nextInt();       //회차
-        System.out.println("수정할 점수를 입력해주세요");
-        int value = sc.nextInt();       //점수
+        boolean valueFg = false;
+        String studentId = null;
+        String subjectId = null;
+        int round = 0;
 
-        boolean hasScores = false;
+
+        while(!valueFg) {
+            studentId = getStudentId(); // 관리할 수강생 고유 번호
+
+            if (validateScoreStudentId(studentId)){
+                System.out.println("존재하지 않은 수강생입니다.");
+            }else{
+                valueFg = true;
+            }
+        }
+        valueFg = false;
+        // 기능 구현 (수정할 과목 및 회차, 점수);
+        while(!valueFg) {
+            System.out.println("수정할 과목을 입력해주세요");
+            subjectId = sc.next().trim();   //과목
+            if (validateScoreSubjectId(studentId,subjectId)) {
+                System.out.println("존재하지 않은 과목입니다.");
+            }else {
+                valueFg = true;
+            }
+        }
+        valueFg = false;
+        while(!valueFg) {
+            System.out.println("수정할 회차를 입력해주세요");
+            round = sc.nextInt();//회차
+
+            if (validateScoreRound(studentId,subjectId,round)){
+                System.out.println("존재하지 않은 회차입니다.");
+            }else{
+                valueFg = true;
+            }
+        }
+            System.out.println("수정할 점수를 입력해주세요");
+            int value = sc.nextInt();       //점수
+            /*
+            private static void validateScoreValue(int scoreValue) {
+        if (scoreValue < 0 || 100 < scoreValue) {
+            throw new IllegalArgumentException("점수는 100 초과 및 음수가 될 수 없습니다. (점수 범위: 0 ~ 100)");
+        }
+    } boolaen 으로 받아서 초기화 되지 않도록 설정
+             */
         System.out.println("시험 점수를 수정합니다...");
         System.out.println("==================================");
         // 기능 구현
         for (Score score : scoreStore) {
-            if (score.getStudentId().equals(studentId) && score.getSubjectId().equals(subjectId)){
-                score.setRound(round);
+            if (score.getStudentId().equals(studentId) && (
+                    score.getSubjectId().equals(subjectId)&&
+                            score.getRound() == round)){
                 score.setValue(value);
-                hasScores =true;
+                System.out.println("사용자 id: "+ score.getStudentId());
+                System.out.println("과목  id: "+ score.getSubjectId());
+                System.out.println("회차    : "+ score.getRound());
+                System.out.println("점수    : "+ score.getValue());
+                System.out.println("==============================");
+                break;
             }
         }
-        if(!hasScores){
-            System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
-        }else {
-            System.out.println("\n점수 수정 성공!");
-        }
+        System.out.println("\n점수 수정 성공!");
 
     }
 
