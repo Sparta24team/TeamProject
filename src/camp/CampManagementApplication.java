@@ -3,6 +3,7 @@ package camp;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
+import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +18,9 @@ import java.util.Scanner;
 public class CampManagementApplication {
 
     private static SubjectRepository subjectRepository;
+    private static StudentRepository studentRepository;
 
     // 데이터 저장소
-    private static List<Student> studentStore;
     private static List<Score> scoreStore;
 
     // 과목 타입
@@ -136,7 +137,7 @@ public class CampManagementApplication {
         }
 
         List<Subject> subjects = new ArrayList<>();
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, subjects, status); // 수강생 인스턴스 생성 예시 코드
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, status, subjects); // 수강생 인스턴스 생성 예시 코드
 
         List<Subject> selectSubjects = new ArrayList<>();
         //필수 선택 과목 3,2개 이상인지 확인하기 위한 변수
@@ -184,7 +185,7 @@ public class CampManagementApplication {
 
         // 기능 구현
         student.setSubjects(selectSubjects);
-        studentStore.add(student);
+        studentRepository.save(student);
         System.out.println("수강생 등록 성공!\n");
     }
 
@@ -203,10 +204,10 @@ public class CampManagementApplication {
     private static void inquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
-        for (int i = 0; i < studentStore.size(); i++) {
-            Student student = studentStore.get(i);
+        List<Student> students = studentRepository.findAll();
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
             System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
-
         }
         System.out.println("\n수강생 목록 조회 성공!");
         System.out.println("상세정보를 조회하시겠습니까?(조회하려면 'Yes'를 뒤로가려면 '아무키나' 입력해주세요.)");
@@ -286,7 +287,8 @@ public class CampManagementApplication {
     }
 
     private static void validateStudentId(String studentId) {
-        boolean isNoneMatch = studentStore.stream()
+        List<Student> students = studentRepository.findAll();
+        boolean isNoneMatch = students.stream()
                 .noneMatch(student -> student.getStudentId().equals(studentId));
         if (isNoneMatch) {
             throw new IllegalArgumentException("존재하지 않는 수강생 ID입니다.");
@@ -546,7 +548,8 @@ public class CampManagementApplication {
         List<Student> eligibleStudents = new ArrayList<>(); // 적격 수강생 ID를 저장할 집합
 
         // 수강생 목록을 순회하며 상태가 일치하는 수강생의 ID를 수집
-        for (Student student : studentStore) {
+        List<Student> students = studentRepository.findAll();
+        for (Student student : students) {
             if (student.getStatus().equalsIgnoreCase(status)) {
                 eligibleStudents.add(student);
             }
@@ -618,7 +621,8 @@ public class CampManagementApplication {
 
     //수강생 ID에 해당하는 수강생 반환
     private static Student getStudentById(String studentId) {
-        for (Student student : studentStore) {
+        List<Student> students = studentRepository.findAll();
+        for (Student student : students) {
             if (student.getStudentId().equals(studentId)) {
                 return student;
             }
