@@ -222,7 +222,6 @@ public class CampManagementApplication {
             return;
         }
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, selectSubjects,""); // 수강생 인스턴스 생성 예시 코드
         // 기능 구현
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
