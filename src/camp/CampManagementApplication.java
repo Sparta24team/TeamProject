@@ -3,6 +3,7 @@ package camp;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
+import camp.repository.ScoreRepository;
 import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
 import java.util.ArrayList;
@@ -19,9 +20,7 @@ public class CampManagementApplication {
 
     private static SubjectRepository subjectRepository;
     private static StudentRepository studentRepository;
-
-    // 데이터 저장소
-    private static List<Score> scoreStore;
+    private static ScoreRepository scoreRepository;
 
     // 과목 타입
     private static String SUBJECT_TYPE_MANDATORY = "MANDATORY";
@@ -46,24 +45,6 @@ public class CampManagementApplication {
             } catch (Exception e) {
                 System.out.println(e);
                 System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
-            }
-        }
-    }
-
-    // index 자동 증가
-    private static String sequence(String type) {
-        switch (type) {
-            case INDEX_TYPE_STUDENT -> {
-                studentIndex++;
-                return INDEX_TYPE_STUDENT + studentIndex;
-            }
-            case INDEX_TYPE_SUBJECT -> {
-                subjectIndex++;
-                return INDEX_TYPE_SUBJECT + subjectIndex;
-            }
-            default -> {
-                scoreIndex++;
-                return INDEX_TYPE_SCORE + scoreIndex;
             }
         }
     }
@@ -137,7 +118,7 @@ public class CampManagementApplication {
         }
 
         List<Subject> subjects = new ArrayList<>();
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, status, subjects); // 수강생 인스턴스 생성 예시 코드
+        Student student = new Student(studentName, status, subjects); // 수강생 인스턴스 생성 예시 코드
 
         List<Subject> selectSubjects = new ArrayList<>();
         //필수 선택 과목 3,2개 이상인지 확인하기 위한 변수
@@ -278,8 +259,8 @@ public class CampManagementApplication {
         String grade = calculateGrade(subjectId, scoreValue);
 
         System.out.println("시험 점수를 등록합니다.");
-        Score score = new Score(sequence(INDEX_TYPE_SCORE), subjectId, studentId, round, scoreValue, grade);
-        scoreStore.add(score);
+        Score score = new Score(subjectId, studentId, round, scoreValue, grade);
+        scoreRepository.save(score);
         System.out.println();
         System.out.printf("%s번 수강생 %s 과목 %d회차 %d점수 등록 성공!\n", studentId, subjectId, round, scoreValue);
 
@@ -316,22 +297,22 @@ public class CampManagementApplication {
     }
 
     public static boolean validateScoreStudentId(String studentId) {
-        return scoreStore.stream()
+        return scoreRepository.findAll().stream()
                 .noneMatch(student -> student.getStudentId().equals(studentId));
     }
 
     public static boolean validateScoreSubjectId(String studentId, String subjectId) {
-        return scoreStore.stream()
+        return scoreRepository.findAll().stream()
                 .noneMatch(score -> score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId));
     }
 
     public static boolean validateScoreRound(String studentId, String subjectId, int round) {
-        return scoreStore.stream()
+        return scoreRepository.findAll().stream()
                 .noneMatch(score -> score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId) && score.getRound() == round);
     }
 
     private static boolean existsScore(String studentId, String subjectId, int round) {
-        return scoreStore.stream()
+        return scoreRepository.findAll().stream()
                 .anyMatch(score -> score.getSubjectId().equals(subjectId) &&
                         score.getRound() == round &&
                         score.getStudentId() == studentId);
@@ -434,7 +415,8 @@ public class CampManagementApplication {
         System.out.println("시험 점수를 수정합니다...");
         System.out.println("==================================");
         // 기능 구현
-        for (Score score : scoreStore) {
+        List<Score> scores = scoreRepository.findAll();
+        for (Score score : scores) {
             if (score.getStudentId().equals(studentId) && (
                     score.getSubjectId().equals(subjectId) &&
                             score.getRound() == round)) {
@@ -443,7 +425,7 @@ public class CampManagementApplication {
                 break;
             }
         }
-        for (Score score : scoreStore) {
+        for (Score score : scores) {
             System.out.println("사용자 id: " + score.getStudentId());
             System.out.println("과목  id: " + score.getSubjectId());
             System.out.println("회차    : " + score.getRound());
@@ -481,7 +463,8 @@ public class CampManagementApplication {
         System.out.println("==================================");
 
         boolean hasScores = false;
-        for (Score score : scoreStore) {
+        List<Score> scores = scoreRepository.findAll();
+        for (Score score : scores) {
             if (score.getSubjectId().equals(subjectId) && score.getStudentId().equals(studentId)) {
                 hasScores = true;
                 System.out.printf("회차 = %d%n 등급 = %s%n",
@@ -516,7 +499,8 @@ public class CampManagementApplication {
             int scoreCount = 0; // 현재 과목의 점수 개수 초기화
 
             //점수 데이터 순환
-            for (Score score : scoreStore) {
+            List<Score> scores = scoreRepository.findAll();
+            for (Score score : scores) {
                 if (score.getStudentId().equals(studentId) && score.getSubjectId().equals(subject.getSubjectId())) {
                     totalScore += score.getScoreValue(); //점수 합산
                     scoreCount++; //점수 개수 증가
@@ -570,7 +554,7 @@ public class CampManagementApplication {
             List<Integer> studentScores = new ArrayList<>();
             for (Subject subject : subjectRepository.findAll()) {
                 if (subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
-                    for (Score score : scoreStore) {
+                    for (Score score : scoreRepository.findAll()) {
                         if (score.getStudentId().equals(student.getStudentId()) && score.getSubjectId().equals(subject.getSubjectId())) {
                             totalScore += score.getScoreValue();
                             scoreCount++;
