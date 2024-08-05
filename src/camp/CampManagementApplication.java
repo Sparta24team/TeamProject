@@ -178,10 +178,65 @@ public class CampManagementApplication {
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, subjects, status); // 수강생 인스턴스 생성 예시 코드
 
 
+        List<Subject> selectSubjects = new ArrayList<>();
+        //필수 선택 과목 3,2개 이상인지 확인하기 위한 변수
+        int mandatoryCount = 0;
+        int choiceCount = 0;
+
+        System.out.println("수강과목 입력");
+        String subjectId;
+        while (true) {
+            System.out.print("과목 ID 입력주세요(exit 입력시 종료):");
+            subjectId = sc.next();
+            if (subjectId.equalsIgnoreCase("exit")) {
+                System.out.println("과목 입력을 종료합니다.");
+                break;
+            }
+
+            Subject subject = null;
+            for (Subject s : subjectStore) {
+                if (s.getSubjectId().equals(subjectId)) {
+                    subject = s;
+                    break;
+                }
+            }
+
+            if (subject == null) {
+                System.out.println("존재하지 않는 과목 ID입니다. 다시 입력해주세요.");
+            } else if (isDuplicate(selectSubjects, subject)) {
+                System.out.println("이미 등록된 과목입니다. 다른 과목을 입력해주세요.");
+            } else {
+                selectSubjects.add(subject);
+                if (SUBJECT_TYPE_MANDATORY.equals(subject.getSubjectType())) {
+                    mandatoryCount++;
+                } else if (SUBJECT_TYPE_CHOICE.equals(subject.getSubjectType())) {
+                    choiceCount++;
+                }
+            }
+
+        }
+
+        // 필수과목 3개 이상, 선택과목 2개 이상
+        if (mandatoryCount < 3 || choiceCount < 2) {
+            System.out.println("필수 과목은 3개 이상, 선택 과목은 2개 이상이어야 합니다.");
+            return;
+        }
+
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, selectSubjects,""); // 수강생 인스턴스 생성 예시 코드
         // 기능 구현
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
+    // 중복 확인
+    private static boolean isDuplicate(List<Subject> subjects, Subject subject) {
+        for (Subject s : subjects) {
+            if (s.getSubjectId().equals(subject.getSubjectId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // 수강생 목록 조회
     private static void inquireStudent() {
