@@ -320,8 +320,8 @@ public class CampManagementApplication {
         int scoreValue = sc.nextInt();
         validateScoreValue(scoreValue);
 
-        if (existsScore(subjectId, round)) {
-            throw new IllegalArgumentException("과목의 회차 점수는 중복되어 등록될 수 없습니다.");
+        if (existsScore(studentId, subjectId, round)) {
+            throw new IllegalArgumentException("과목의 회차 점수 는 중복되어 등록될 수 없습니다.");
         }
 
         String grade = calculateGrade(subjectId, scoreValue);
@@ -374,9 +374,11 @@ public class CampManagementApplication {
                 .noneMatch(score -> score.getSubjectId().equals(subjectId)&&score.getStudentId().equals(studentId) && score.getRound() == round);
     }
 
-    private static boolean existsScore(String subjectId, int round) {
+    private static boolean existsScore(String studentId, String subjectId, int round) {
         return scoreStore.stream()
-                .anyMatch(score -> score.getSubjectId().equals(subjectId) && score.getRound() == round);
+                .anyMatch(score -> score.getSubjectId().equals(subjectId) &&
+                        score.getRound() == round &&
+                        score.getStudentId() == studentId);
     }
 
     private static String calculateGrade(String subjectId, int scoreValue) {
@@ -437,9 +439,9 @@ public class CampManagementApplication {
         while(!valueFg) {
             studentId = getStudentId(); // 관리할 수강생 고유 번호
 
-            if (validateScoreStudentId(studentId)){
+            if (validateScoreStudentId(studentId)) {
                 System.out.println("존재하지 않은 수강생입니다.");
-            }else{
+            } else {
                 valueFg = true;
             }
         }
