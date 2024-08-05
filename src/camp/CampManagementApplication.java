@@ -156,6 +156,7 @@ public class CampManagementApplication {
                     flag = false;
                 }
             }
+
         }
     }
 
@@ -170,7 +171,7 @@ public class CampManagementApplication {
         System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
         String status = sc.next();
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, status); // 수강생 인스턴스 생성 예시 코드
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName ,status); // 수강생 인스턴스 생성 예시 코드
 
         // 기능 구현
         studentStore.add(student);
@@ -179,11 +180,21 @@ public class CampManagementApplication {
 
     // 수강생 목록 조회
     private static void inquireStudent() {
+        String type;
         System.out.println("\n수강생 목록을 조회합니다...");
-        // 기능 구현
-        System.out.println("\n수강생 목록 조회 성공!");
-    }
+        for (int i = 0; i < studentStore.size(); i++) {
+            Student student = studentStore.get(i);
+            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
 
+        }
+        System.out.println("\n수강생 목록 조회 성공!");
+        System.out.println("상세정보를 조회하시겠습니까?(조회하려면 'Yes'를 뒤로가려면 '아무키나' 입력해주세요.)");
+        type = sc.next();
+       if (type.equals("Yes")) {
+           inquireRoundGradeBySubject();
+       }
+    }
+//1. 866766 / park
     private static void displayScoreView() {
         boolean flag = true;
         while (flag) {
