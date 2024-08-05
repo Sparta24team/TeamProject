@@ -169,8 +169,17 @@ public class CampManagementApplication {
         // 기능 구현 (필수 과목, 선택 과목)
 
         //상태값 테스트 코드
-        System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
-        String status = sc.next();
+        String status = "";
+        boolean validStatus = false;
+        while (!validStatus) {
+            System.out.print("수강생 상태 입력 (예: Green, Red, Yellow): ");
+            status = sc.next().trim();
+            if (status.equalsIgnoreCase("Green") || status.equalsIgnoreCase("Red") || status.equalsIgnoreCase("Yellow")) {
+                validStatus = true;
+            } else {
+                System.out.println("잘못된 상태입니다. 다시 입력해주세요.");
+            }
+        }
 
 
 
@@ -222,8 +231,8 @@ public class CampManagementApplication {
             return;
         }
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, selectSubjects,""); // 수강생 인스턴스 생성 예시 코드
         // 기능 구현
+        student.setSubjects(selectSubjects);
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
@@ -571,7 +580,7 @@ public class CampManagementApplication {
     private static void inquireMandatoryGrades() {
         System.out.println("특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
         System.out.print("조회할 상태를 입력하세요 (Green, Red, Yellow): ");
-        String status = sc.next(); // 조회할 수강생 상태 status 저장
+        String status = sc.next().trim(); // 조회할 수강생 상태 status 저장
 
         List<Student> eligibleStudents = new ArrayList<>(); // 적격 수강생 ID를 저장할 집합
 
@@ -592,7 +601,7 @@ public class CampManagementApplication {
 
         // 필수 과목 점수 합산
         for (Student student : eligibleStudents) {
-            for (Subject subject : student.getSubjects()) {
+            for (Subject subject : subjectStore) {
                 if (subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
                     for (Score score : scoreStore) {
                         if (score.getStudentId().equals(student.getStudentId()) && score.getSubjectId().equals(subject.getSubjectId())) {
@@ -607,12 +616,34 @@ public class CampManagementApplication {
         if (scoreCount == 0) {
             System.out.println("필수 과목 점수 데이터가 없습니다.");
         } else {
-            int averageScore = totalScore / scoreCount;
-            String averageGrade = calculateGrade(INDEX_TYPE_SUBJECT, averageScore);
-            System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
+            try {
+                int averageScore = totalScore / scoreCount;
+                String averageGrade = calculateGradeForScore(averageScore);
+                System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
+            } catch (Exception e) {
+                System.out.println("등급 계산 중 오류 발생: " + e.getMessage());
+            }
         }
-
         System.out.println("\n등급 조회 완료!");
+    }
+    // 점수를 위한 등급 계산 메서드 추가
+    private static String calculateGradeForScore(int scoreValue) {
+        if (scoreValue >= 95) {
+            return "A";
+        }
+        if (scoreValue >= 90) {
+            return "B";
+        }
+        if (scoreValue >= 80) {
+            return "C";
+        }
+        if (scoreValue >= 70) {
+            return "D";
+        }
+        if (scoreValue >= 60) {
+            return "F";
+        }
+        return "N";
     }
 
     //수강생 ID에 해당하는 수강생 반환
