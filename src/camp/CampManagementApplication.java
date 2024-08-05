@@ -35,10 +35,13 @@ public class CampManagementApplication {
     public static void main(String[] args) {
         System.out.println(scoreIndex);
         setInitData();
-        try {
-            displayMainView();
-        } catch (Exception e) {
-            System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
+        while (true) {
+            try {
+                displayMainView();
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
+            }
         }
     }
 
@@ -599,18 +602,23 @@ public class CampManagementApplication {
         int totalScore = 0;
         int scoreCount = 0;
 
+        Map<String, List<Integer>> studentScoresMap = new HashMap<>();
+
         // 필수 과목 점수 합산
         for (Student student : eligibleStudents) {
+            List<Integer> studentScores = new ArrayList<>();
             for (Subject subject : subjectStore) {
                 if (subject.getSubjectType().equals(SUBJECT_TYPE_MANDATORY)) {
                     for (Score score : scoreStore) {
                         if (score.getStudentId().equals(student.getStudentId()) && score.getSubjectId().equals(subject.getSubjectId())) {
                             totalScore += score.getScoreValue();
                             scoreCount++;
+                            studentScores.add(score.getScoreValue());
                         }
                     }
                 }
             }
+            studentScoresMap.put(student.getStudentId(), studentScores);
         }
         //필수 과목 점수 데이터 없는 경우
         if (scoreCount == 0) {
@@ -620,6 +628,9 @@ public class CampManagementApplication {
                 int averageScore = totalScore / scoreCount;
                 String averageGrade = calculateGradeForScore(averageScore);
                 System.out.printf("상태: %s, 필수 과목 평균 등급: %s%n", status, averageGrade);
+                for (Map.Entry<String, List<Integer>> entry : studentScoresMap.entrySet()) { // 수정햇슈
+                    System.out.printf("수강생 ID: %s, 점수: %s%n", entry.getKey(), entry.getValue()); // 수정햇슈
+                }
             } catch (Exception e) {
                 System.out.println("등급 계산 중 오류 발생: " + e.getMessage());
             }
