@@ -1,5 +1,7 @@
 package camp.model;
 
+import camp.dataField.DataField;
+
 public class Score {
 
     private String scoreId;
