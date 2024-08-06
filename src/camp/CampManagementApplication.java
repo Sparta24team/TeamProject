@@ -1,16 +1,20 @@
 package camp;
 
+import camp.config.ApplicationConfig;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
 import camp.repository.ScoreRepository;
 import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
+import camp.service.StudentService;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Notification Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다. main 메서드를 실행하면 프로그램이 실행됩니다. model 의 클래스들과 아래 (// 기능 구현...) 주석 부분을 완성해주세요! 프로젝트 구조를 변경하거나 기능을
@@ -18,27 +22,23 @@ import java.util.Scanner;
  */
 public class CampManagementApplication {
 
+    private static ApplicationConfig applicationConfig = new ApplicationConfig();
+    private static SubjectRepositoryInitializer subjectRepositoryInitializer = applicationConfig.subjectRepositoryInitializer();
+
+    private static StudentService studentService = applicationConfig.studentService();
+
     private static SubjectRepository subjectRepository;
-    private static StudentRepository studentRepository;
     private static ScoreRepository scoreRepository;
 
     // 과목 타입
     private static String SUBJECT_TYPE_MANDATORY = "MANDATORY";
     private static String SUBJECT_TYPE_CHOICE = "CHOICE";
 
-    // index 관리 필드
-    private static int studentIndex;
-    private static final String INDEX_TYPE_STUDENT = "ST";
-    private static int subjectIndex;
-    private static final String INDEX_TYPE_SUBJECT = "SU";
-    private static int scoreIndex;
-    private static final String INDEX_TYPE_SCORE = "SC";
-
     // 스캐너
     private static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println(scoreIndex);
+        subjectRepositoryInitializer.initialize();
         while (true) {
             try {
                 displayMainView();
@@ -102,7 +102,6 @@ public class CampManagementApplication {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.next();
-        // 기능 구현 (필수 과목, 선택 과목)
 
         //상태값 테스트 코드
         String status = "";
@@ -117,75 +116,28 @@ public class CampManagementApplication {
             }
         }
 
-        List<Subject> subjects = new ArrayList<>();
-        Student student = new Student(studentName, status, subjects); // 수강생 인스턴스 생성 예시 코드
-
-        List<Subject> selectSubjects = new ArrayList<>();
-        //필수 선택 과목 3,2개 이상인지 확인하기 위한 변수
-        int mandatoryCount = 0;
-        int choiceCount = 0;
-
         System.out.println("수강과목 입력");
-        String subjectId;
+        Set<String> studentIds = new HashSet<>();
         while (true) {
             System.out.print("과목 ID 입력주세요(exit 입력시 종료):");
-            subjectId = sc.next();
+            String subjectId = sc.next();
             if (subjectId.equalsIgnoreCase("exit")) {
                 System.out.println("과목 입력을 종료합니다.");
                 break;
             }
-
-            Subject subject = null;
-            for (Subject s : subjectRepository.findAll()) {
-                if (s.getSubjectId().equals(subjectId)) {
-                    subject = s;
-                    break;
-                }
-            }
-
-            if (subject == null) {
-                System.out.println("존재하지 않는 과목 ID입니다. 다시 입력해주세요.");
-            } else if (isDuplicate(selectSubjects, subject)) {
-                System.out.println("이미 등록된 과목입니다. 다른 과목을 입력해주세요.");
-            } else {
-                selectSubjects.add(subject);
-                if (SUBJECT_TYPE_MANDATORY.equals(subject.getSubjectType())) {
-                    mandatoryCount++;
-                } else if (SUBJECT_TYPE_CHOICE.equals(subject.getSubjectType())) {
-                    choiceCount++;
-                }
-            }
-
-        }
-
-        // 필수과목 3개 이상, 선택과목 2개 이상
-        if (mandatoryCount < 3 || choiceCount < 2) {
-            System.out.println("필수 과목은 3개 이상, 선택 과목은 2개 이상이어야 합니다.");
-            return;
+            studentIds.add(subjectId);
         }
 
         // 기능 구현
-        student.setSubjects(selectSubjects);
-        studentRepository.save(student);
+        studentService.registerStudent(studentName, status, studentIds);
         System.out.println("수강생 등록 성공!\n");
     }
-
-    // 중복 확인
-    private static boolean isDuplicate(List<Subject> subjects, Subject subject) {
-        for (Subject s : subjects) {
-            if (s.getSubjectId().equals(subject.getSubjectId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     // 수강생 목록 조회
     private static void inquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentService.getStudents();
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
             System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
@@ -268,7 +220,7 @@ public class CampManagementApplication {
     }
 
     private static void validateStudentId(String studentId) {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentService.getStudents();
         boolean isNoneMatch = students.stream()
                 .noneMatch(student -> student.getStudentId().equals(studentId));
         if (isNoneMatch) {
@@ -532,7 +484,7 @@ public class CampManagementApplication {
         List<Student> eligibleStudents = new ArrayList<>(); // 적격 수강생 ID를 저장할 집합
 
         // 수강생 목록을 순회하며 상태가 일치하는 수강생의 ID를 수집
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentService.getStudents();
         for (Student student : students) {
             if (student.getStatus().equalsIgnoreCase(status)) {
                 eligibleStudents.add(student);
@@ -605,7 +557,7 @@ public class CampManagementApplication {
 
     //수강생 ID에 해당하는 수강생 반환
     private static Student getStudentById(String studentId) {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentService.getStudents();
         for (Student student : students) {
             if (student.getStudentId().equals(studentId)) {
                 return student;
