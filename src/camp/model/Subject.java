@@ -22,4 +22,8 @@ public class Subject {
         return subjectType;
     }
 
+    @Override
+    public String toString() {
+        return  subjectName;
+    }
 }
