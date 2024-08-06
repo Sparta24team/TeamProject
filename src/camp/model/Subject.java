@@ -26,4 +26,17 @@ public class Subject {
     public void setSubjectId(String subjectId) {
         this.subjectId = subjectId;
     }
+
+    public boolean isMandatory() {
+        return subjectType.equals("MANDATORY");
+    }
+
+    public boolean isChoice() {
+        return subjectType.equals("CHOICE");
+    }
+
+    @Override
+    public String toString() {
+        return "subjectName: " + subjectName;
+    }
 }
