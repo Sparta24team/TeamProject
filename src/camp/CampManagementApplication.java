@@ -250,13 +250,14 @@ public class CampManagementApplication {
     }
 
 
-    // 수강생 목록 조회
+    // 수강생 목록 및 고유번호, 이름 및 상태와 선택한 과목 조회
     private static void inquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
         for (int i = 0; i < studentStore.size(); i++) {
             Student student = studentStore.get(i);
-            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
+            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s / 상태 : %s / 선택한 과목 : %s\n"
+                    , student.getStudentId(), student.getStudentName(), student.getStatus(), student.getSubjects());
 
         }
         System.out.println("\n수강생 목록 조회 성공!");
