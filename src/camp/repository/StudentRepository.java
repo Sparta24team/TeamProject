@@ -1,17 +1,29 @@
 package camp.repository;
 
 import camp.model.Student;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StudentRepository {
 
     private final String STUDENT_CODE = "ST";
 
+    private static StudentRepository instance;
+
     private final List<Student> studentStore;
     private int sequence = 0;
 
-    public StudentRepository(List<Student> studentStore) {
-        this.studentStore = studentStore;
+    private StudentRepository() {
+        this.studentStore = new ArrayList<>();
+    }
+
+    public static StudentRepository getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new StudentRepository();
+            return instance;
+        }
+        return instance;
     }
 
     public void save(Student student) {
