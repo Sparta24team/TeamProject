@@ -72,6 +72,26 @@ public class Score {
             return "F";
         }
     }
+
+    public boolean isSameStudentId(String studentId) {
+        return this.studentId.equals(studentId);
+    }
+
+    public boolean isSameSubjectId(String subjectId) {
+        return this.subjectId.equals(subjectId);
+    }
+
+    public boolean isSameRound(int round) {
+        return this.round == round;
+    }
+
+    public void updateValue(int scoreValue) {
+        this.value = scoreValue;
+    }
+
+    public void updateGrade(String grade) {
+        this.grade = grade;
+    }
 }
 
 

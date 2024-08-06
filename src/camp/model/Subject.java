@@ -39,4 +39,12 @@ public class Subject {
     public String toString() {
         return "subjectName: " + subjectName;
     }
+
+    public boolean isSameSubjectId(String subjectId) {
+        return this.subjectId.equals(subjectId);
+    }
+
+    public boolean isSameSubjectType(String subjectType) {
+        return this.subjectType.equals(subjectType);
+    }
 }

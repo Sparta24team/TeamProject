@@ -48,4 +48,22 @@ public class SubjectRepository {
         sequence++;
         return SUBJECT_CODE + sequence;
     }
+
+    public boolean doesNotExist(String subjectId) {
+        return subjectStore.stream()
+                .noneMatch(subject -> subject.isSameSubjectId(subjectId));
+    }
+
+    public Subject finById(String subjectId) {
+        return subjectStore.stream()
+                .filter(subject -> subject.isSameSubjectId(subjectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
+    }
+
+    public List<Subject> findAllBySubjectType(String subjectType) {
+        return subjectStore.stream()
+                .filter(subject -> subject.isSameSubjectType(subjectType))
+                .collect(Collectors.toList());
+    }
 }

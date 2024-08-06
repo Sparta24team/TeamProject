@@ -1,7 +1,5 @@
 package camp.model;
 
-import java.util.*;
-
 import java.util.List;
 
 public class Student {
@@ -40,5 +38,13 @@ public class Student {
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public boolean isSameStudentId(String studentId) {
+        return this.studentId.equals(studentId);
+    }
+
+    public boolean isSameStatus(String status) {
+        return this.status.equals(status);
     }
 }

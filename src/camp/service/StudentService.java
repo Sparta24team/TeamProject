@@ -30,7 +30,7 @@ public class StudentService {
 
     public void registerStudent(String studentName, String studentStatus, Set<String> subjectIds) {
         List<Subject> subjects = subjectRepository.findAllById(subjectIds);
-        if (isMandatorySubjectLessThan(3, subjects) || isChoiceSubjectLessThan(2, subjects)) {
+        if (isMandatorySubjectCountLessThan(3, subjects) || isChoiceSubjectCountLessThan(2, subjects)) {
             throw new IllegalArgumentException("필수 과목은 3개 이상, 선택 과목은 2개 이상이어야 합니다.");
         }
 
@@ -42,14 +42,14 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    private boolean isMandatorySubjectLessThan(int condition, List<Subject> subjects) {
+    private boolean isMandatorySubjectCountLessThan(int condition, List<Subject> subjects) {
         long mandatorySubjectCount = subjects.stream()
                 .filter(Subject::isMandatory)
                 .count();
         return mandatorySubjectCount < condition;
     }
 
-    private boolean isChoiceSubjectLessThan(int condition, List<Subject> subjects) {
+    private boolean isChoiceSubjectCountLessThan(int condition, List<Subject> subjects) {
         long choiceSubjectCount = subjects.stream()
                 .filter(Subject::isChoice)
                 .count();
