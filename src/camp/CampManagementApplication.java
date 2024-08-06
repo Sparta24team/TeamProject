@@ -250,7 +250,11 @@ public class CampManagementApplication {
     }
 
 
+    // 수강생 목록 조회
+
+
     // 수강생 목록 및 고유번호, 이름 및 상태와 선택한 과목 조회
+
     private static void inquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
@@ -261,11 +265,62 @@ public class CampManagementApplication {
 
         }
         System.out.println("\n수강생 목록 조회 성공!");
+        System.out.print("수강생 정보 수정 또는 삭제 하시겠습니까?(수정하려면 '1'를 삭제하려면 '2' 입력해주세요.) : ");
+        type = sc.next();
+        if (type.equals("1")) {
+            modifyStuedentNameOrStatus();
+        }
+        if (type.equals("2")) {
+            deleteStudent();
+        }
         System.out.println("상세정보를 조회하시겠습니까?(조회하려면 'Yes'를 뒤로가려면 '아무키나' 입력해주세요.)");
         type = sc.next();
        if (type.equals("Yes")) {
            inquireRoundGradeBySubject();
        }
+    }
+
+
+    //수강생 정보 수정
+    private static void modifyStuedentNameOrStatus() {
+        System.out.print("수정할 수강생의 고유번호를 입력해 주세요 :");
+        String studentId = sc.next().trim();
+
+        Student student = getStudentById(studentId);
+
+        System.out.println("수정할 항목을 선택하세요:");
+        System.out.println("1. 이름 수정");
+        System.out.println("2. 상태 수정");
+        System.out.print("선택: ");
+        String choice = sc.next();
+
+        if (choice.equals("1")) {
+            System.out.print("수정할 이름을 입력해 주세요 : ");
+            String newName = sc.next().trim();
+            student.setStudentName(newName);
+            System.out.println("수강생 이름 변경 완료");
+        }
+        if (choice.equals("2")) {
+            System.out.print("수정할 상태를 입력해 주세요(예: Green, Red, Yellow) : ");
+            String newStatus = sc.next().trim();
+            if(newStatus.equalsIgnoreCase("Green") || newStatus.equalsIgnoreCase("Red") || newStatus.equalsIgnoreCase("Yellow")) {
+                student.setStatus(newStatus);
+                System.out.println("상태 수정 완료");
+            }
+
+        }
+
+    }
+    //수강생 정보 삭제
+    private static void deleteStudent() {
+        System.out.print("삭제할 수강생의 고유번호를 입력해 주세요 :");
+        String StudentId = sc.next().trim();
+
+        Student student = getStudentById(StudentId);
+        studentStore.remove(student);
+        System.out.println("수강생 삭제 완료");
+
+
     }
 //1. 866766 / park
     private static void displayScoreView() {

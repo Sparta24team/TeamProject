@@ -31,4 +31,11 @@ public class Student {
         this.subjects = subjects;
     }
 
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
