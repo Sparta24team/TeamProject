@@ -3,10 +3,10 @@ package camp.model;
 public class Score {
 
     private String scoreId;
-    private String subjectId;     //
+    private String subjectId;
     private String studentId;
-    private int round;            //회차
-    private int value;            //점수
+    private int round;
+    private int value;
     private String grade;
 
     public Score(String scoreId, String subjectId, String studentId, int round, int value, String grade) {
@@ -18,20 +18,17 @@ public class Score {
         this.grade = grade;
     }
 
-
-    // Getter
     public String getScoreId() {
         return scoreId;
     }
-    public void setRound(int round){
+
+    public void setRound(int round) {
         this.round = round;
     }
-//    public void setValue(int value){
-//        this.value = value;
-//    }
-    public void setValue(int value){
-      this.value = value;
-      this.grade = calculateGrade(value);
+
+    public void setValue(int value) {
+        this.value = value;
+        this.grade = calculateGrade(value);
     }
 
     public int getRound() {
@@ -39,26 +36,26 @@ public class Score {
     }
 
     public String getSubjectId() {
-      
         return subjectId;
     }
 
     public String getStudentId() {
         return studentId;
     }
-    public int getValue(){
+
+    public int getValue() {
         return value;
     }
 
-    public String getGrade(){
+    public String getGrade() {
         return grade;
     }
 
     public int getScoreValue() {
         return value;
     }
+
     private String calculateGrade(int value) {
-        // 점수에 따른 등급 계산 로직
         if (value >= 90) {
             return "A";
         } else if (value >= 80) {
@@ -71,7 +68,4 @@ public class Score {
             return "F";
         }
     }
-
 }
-
-

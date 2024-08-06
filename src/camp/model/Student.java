@@ -1,34 +1,33 @@
 package camp.model;
-import java.util.*;
 
 import java.util.List;
 
 public class Student {
-    private String studentId;
-    private String studentName;
-    private List<Subject> subjects;
-    private String status;
+    private final String studentId;
+    private final String studentName;
+    private final List<Subject> subjects;
+    private final String status;
 
-    public Student(String seq, String studentName, List<Subject> subjects, String status) {
-        this.studentId = seq;
+    public Student(String studentId, String studentName, List<Subject> subjects, String status) {
+        this.studentId = studentId;
         this.studentName = studentName;
         this.subjects = subjects;
         this.status = status;
     }
 
-    // Getter
-    public String getStudentId() { return studentId; }
+    public String getStudentId() {
+        return studentId;
+    }
 
-    public String getStudentName() { return studentName; }
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
 
     public String getStatus() {
         return status;
     }
-
-    public List<Subject> getSubjects() { return subjects; }
-
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
-    }
-
 }
