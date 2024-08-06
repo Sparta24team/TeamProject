@@ -209,7 +209,7 @@ public class CampManagementApplication {
     private static void inquireStudentAverageGrade() {
         String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
 
-        Student student = getStudentById(studentId);
+        Student student = studentService.getStudent(studentId);
         if (student == null) {
             System.out.println("존재하지 않는 수강생 ID입니다.");
             return;
