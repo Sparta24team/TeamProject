@@ -1,6 +1,6 @@
 package camp.repository;
 
-import develop.model.Score;
+import camp.model.Score;
 
 import java.util.ArrayList;
 import java.util.List;
