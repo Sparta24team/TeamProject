@@ -216,10 +216,10 @@ public class StudentView {
 
         System.out.println("다른 상태인 수강생을 조회하시려면 'Yes'입력 , 나가려면 'exit'를 입력해주세요.");
         type = sc.next();
-        if (type.equals("Yes")) {
+        if (type.equalsIgnoreCase("Yes")) {
             statusInquireStudent();
         }
-        if (type.equals("exit")) {
+        if (type.equalsIgnoreCase("exit")) {
             displayStudentView();
         }
 
