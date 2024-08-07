@@ -138,15 +138,45 @@ public class StudentView {
         return false;
     }
 
-    // 모든 수강생 목록을 조회하고, 수정 및 삭제를 처리
+    // 수강생 목록 조회
     private void inquireStudent() {
+        boolean flag = true;
+        while (flag) {
+            System.out.println("==================================");
+            System.out.println("수강생 목록 조회 방법을 선택해주세요.");
+            System.out.println("1. 수강생 목록 기본조회");
+            System.out.println("2. 상태에 따른 수강생 목록 조회");
+            System.out.println("3. 메인 화면 이동");
+            System.out.print("관리 항목을 선택하세요...");
+            int input = sc.nextInt();
+
+            switch (input) {
+                case 1 -> basicInquireStudent(); // 수강생 목록 기본조회
+                case 2 -> statusInquireStudent(); // 상태에 따른 수강생 목록 조회
+                case 3 -> flag = false; // 메인 화면 이동
+                default -> {
+                    System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
+                    flag = false;
+                }
+            }
+
+        }
+    }
+
+
+
+
+    // 수강생 목록 및 고유번호, 이름 및 상태와 선택한 과목 조회
+
+    private void basicInquireStudent() {
         String type;
-        System.out.println("\n수강생 목록을 조회합니다...");
         List<Student> students = studentController.getAllStudents();
+        System.out.println("\n수강생 목록을 조회합니다...");
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
-            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s / 상태 : %s / 선택한 과목 : %s\n",
-                    student.getStudentId(), student.getStudentName(), student.getStatus(), student.getSubjects());
+            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s / 상태 : %s / 선택한 과목 : %s\n"
+                    , student.getStudentId(), student.getStudentName(), student.getStatus(), student.getSubjects());
+
         }
         System.out.println("\n수강생 목록 조회 성공!");
         System.out.print("수강생 정보 수정 또는 삭제 하시겠습니까?(수정하려면 '1'를 삭제하려면 '2' 입력해주세요.) : ");
@@ -159,16 +189,46 @@ public class StudentView {
         }
         System.out.println("상세정보를 조회하시겠습니까?(조회하려면 'Yes'를 뒤로가려면 '아무키나' 입력해주세요.)");
         type = sc.next();
-        if (type.equalsIgnoreCase("Yes")) {
+        if (type.equals("Yes")) {
             inquireRoundGradeBySubject();
         }
+    }
+
+    private void statusInquireStudent(){
+        String type;
+        List<Student> students = studentController.getAllStudents();
+        System.out.println("조회 하고 싶은 상태를 입력해주세요. (Green, Red, Yellow 중 택 1) )");
+        type = sc.next();
+        boolean flag = false;
+        for (Student student : students) {
+            if (student.getStatus().equalsIgnoreCase(type)){
+                flag = true;
+                System.out.printf("상태 : %s / 이름 : %s / 고유 번호 : %s\n"
+                        ,student.getStatus(), student.getStudentName(), student.getStudentId());
+            }
+        }
+        if (!flag){
+            System.out.println("일치하는 상태의 수강생이 없습니다.");
+
+        } else {
+            System.out.println("\n상태에 따른 수강생 목록 조회 성공!");
+        }
+
+        System.out.println("다른 상태인 수강생을 조회하시려면 'Yes'입력 , 나가려면 'exit'를 입력해주세요.");
+        type = sc.next();
+        if (type.equals("Yes")) {
+            statusInquireStudent();
+        }
+        if (type.equals("exit")) {
+            displayStudentView();
+        }
+
     }
 
     // 수강생의 이름 또는 상태를 수정
     private void modifyStudentNameOrStatus() { // 추가된 코드
         System.out.print("수정할 수강생의 고유번호를 입력해 주세요 :");
         String studentId = sc.next().trim();
-        Student student = studentController.getStudentById(studentId);
 
         System.out.println("수정할 항목을 선택하세요:");
         System.out.println("1. 이름 수정");
