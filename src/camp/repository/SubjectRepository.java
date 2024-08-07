@@ -54,7 +54,7 @@ public class SubjectRepository {
                 .noneMatch(subject -> subject.isSameSubjectId(subjectId));
     }
 
-    public Subject finById(String subjectId) {
+    public Subject findById(String subjectId) {
         return subjectStore.stream()
                 .filter(subject -> subject.isSameSubjectId(subjectId))
                 .findFirst()

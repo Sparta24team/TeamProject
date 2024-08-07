@@ -50,7 +50,7 @@ public class ScoreService {
             throw new IllegalArgumentException("과목의 회차 점수는 중복되어 등록될 수 없습니다.");
         }
 
-        Subject subject = subjectRepository.finById(subjectId);
+        Subject subject = subjectRepository.findById(subjectId);
         String grade = gradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
 
         Score score = new Score(subjectId, studentId, round, scoreValue, grade);
@@ -68,7 +68,7 @@ public class ScoreService {
             throw new IllegalArgumentException("존재하지 않는 회차입니다.");
         }
 
-        Subject subject = subjectRepository.finById(subjectId);
+        Subject subject = subjectRepository.findById(subjectId);
         String grade = gradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
 
         return scoreRepository.updateScore(studentId, subjectId, round, scoreValue, grade);
