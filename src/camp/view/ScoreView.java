@@ -4,14 +4,28 @@ import camp.controller.ScoreController;
 
 import java.util.Scanner;
 
+/**
+ * ScoreView: 사용자 인터페이스를 통해 점수 관리 기능 제공
+ -
+ * 주요 기능:
+ * - 점수 관리 메뉴 표시 및 사용자 입력 처리
+ * - 수강생의 과목별 시험 회차 및 점수 등록
+ * - 수강생의 과목별 회차 점수 수정
+ * - 수강생의 특정 과목 회차별 등급 조회
+ * - 특정 상태 수강생들의 필수 과목 평균 등급 조회
+ * - 수강생의 과목별 평균 등급 조회
+ */
+
 public class ScoreView {
     private final ScoreController scoreController;
     private static final Scanner sc = new Scanner(System.in);
 
+    // ScoreController 객체를 초기화
     public ScoreView(ScoreController scoreController) {
         this.scoreController = scoreController;
     }
 
+    // 점수 관리 메뉴를 표시하고 사용자 입력을 처리
     public void displayScoreView() {
         boolean flag = true;
         while (flag) {
@@ -41,6 +55,7 @@ public class ScoreView {
         }
     }
 
+    // 수강생의 과목별 시험 회차 및 점수를 등록
     private void createScore() {
         System.out.println("시험 점수를 등록합니다.");
         System.out.println("관리할 수강생의 번호를 입력하세요.");
@@ -70,6 +85,7 @@ public class ScoreView {
         System.out.println("\n점수 등록 성공!");
     }
 
+    // 수강생의 과목별 회차 점수를 수정
     private void updateRoundScoreBySubject() {
         boolean valueFg = false;
         String studentId = null;
@@ -114,6 +130,7 @@ public class ScoreView {
         System.out.println("\n점수 수정 성공!");
     }
 
+    // 수강생의 특정 과목 회차별 등급을 조회
     private void inquireRoundGradeBySubject() {
         System.out.println("관리할 수강생의 번호를 입력하세요.");
         String studentId = sc.next();
@@ -124,6 +141,7 @@ public class ScoreView {
         System.out.println("\n등급 조회 완료!");
     }
 
+    // 특정 상태 수강생들의 필수 과목 평균 등급을 조회
     private void inquireMandatoryGrades() {
         System.out.println("조회할 상태를 입력하세요 (Green, Red, Yellow): ");
         String status = sc.next().trim();
@@ -132,6 +150,7 @@ public class ScoreView {
         System.out.println("\n등급 조회 완료!");
     }
 
+    // 수강생의 과목별 평균 등급을 조회
     private void inquireStudentAverageGrade() {
         System.out.println("관리할 수강생의 번호를 입력하세요.");
         String studentId = sc.next();
@@ -140,6 +159,7 @@ public class ScoreView {
         System.out.println("\n평균 등급 조회 완료!");
     }
 
+    // 사용자로부터 수강생 ID를 입력받음
     private String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
         return sc.next().trim();
