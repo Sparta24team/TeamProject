@@ -139,7 +139,7 @@ public class StudentView {
     }
 
     // 수강생 목록 조회
-    private static void inquireStudent() {
+    private void inquireStudent() {
         boolean flag = true;
         while (flag) {
             System.out.println("==================================");
@@ -168,7 +168,7 @@ public class StudentView {
 
     // 수강생 목록 및 고유번호, 이름 및 상태와 선택한 과목 조회
 
-    private static void basicInquireStudent() {
+    private void basicInquireStudent() {
         String type;
         List<Student> students = studentController.getAllStudents();
         System.out.println("\n수강생 목록을 조회합니다...");
@@ -194,14 +194,14 @@ public class StudentView {
         }
     }
 
-    private static void statusInquireStudent(){
+    private void statusInquireStudent(){
         String type;
         List<Student> students = studentController.getAllStudents();
         System.out.println("조회 하고 싶은 상태를 입력해주세요. (Green, Red, Yellow 중 택 1) )");
         type = sc.next();
         boolean flag = false;
         for (Student student : students) {
-            if (student.getStatus().equals(type)){
+            if (student.getStatus().equalsIgnoreCase(type)){
                 flag = true;
                 System.out.printf("상태 : %s / 이름 : %s / 고유 번호 : %s\n"
                         ,student.getStatus(), student.getStudentName(), student.getStudentId());
@@ -229,7 +229,6 @@ public class StudentView {
     private void modifyStudentNameOrStatus() { // 추가된 코드
         System.out.print("수정할 수강생의 고유번호를 입력해 주세요 :");
         String studentId = sc.next().trim();
-        Student student = studentController.getStudentById(studentId);
 
         System.out.println("수정할 항목을 선택하세요:");
         System.out.println("1. 이름 수정");
