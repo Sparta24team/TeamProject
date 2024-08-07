@@ -165,6 +165,7 @@ public class CampManagementApplication {
     }
 
     // 수강생 등록
+
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
@@ -251,11 +252,36 @@ public class CampManagementApplication {
 
 
     // 수강생 목록 조회
+    private static void inquireStudent() {
+        boolean flag = true;
+        while (flag) {
+            System.out.println("==================================");
+            System.out.println("수강생 목록 조회 방법을 선택해주세요.");
+            System.out.println("1. 수강생 목록 기본조회");
+            System.out.println("2. 상태에 따른 수강생 목록 조회");
+            System.out.println("3. 메인 화면 이동");
+            System.out.print("관리 항목을 선택하세요...");
+            int input = sc.nextInt();
+
+            switch (input) {
+                case 1 -> basicInquireStudent(); // 수강생 목록 기본조회
+                case 2 -> statusInquireStudent(); // 상태에 따른 수강생 목록 조회
+                case 3 -> flag = false; // 메인 화면 이동
+                default -> {
+                    System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
+                    flag = false;
+                }
+            }
+
+        }
+    }
+
+
 
 
     // 수강생 목록 및 고유번호, 이름 및 상태와 선택한 과목 조회
 
-    private static void inquireStudent() {
+    private static void basicInquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
         for (int i = 0; i < studentStore.size(); i++) {
@@ -279,6 +305,42 @@ public class CampManagementApplication {
            inquireRoundGradeBySubject();
        }
     }
+
+    private static void statusInquireStudent(){
+        String type;
+        System.out.println("조회 하고 싶은 상태를 입력해주세요. (Green, Red, Yellow 중 택 1) )");
+        type = sc.next();
+        boolean flag = false;
+        for (Student student : studentStore) {
+            if (student.getStatus().equals(type)){
+                flag = true;
+                System.out.printf("상태 : %s / 이름 : %s / 고유 번호 : %s\n"
+                        ,student.getStatus(), student.getStudentName(), student.getStudentId());
+            }
+        }
+        if (!flag){
+            System.out.println("일치하는 상태의 수강생이 없습니다.");
+
+        } else {
+            System.out.println("\n상태에 따른 수강생 목록 조회 성공!");
+        }
+
+        System.out.println("다른 상태인 수강생을 조회하시려면 'Yes'입력 , 나가려면 'exit'를 입력해주세요.");
+        type = sc.next();
+        if (type.equals("Yes")) {
+            statusInquireStudent();
+        }
+        if (type.equals("exit")) {
+            displayStudentView();
+        }
+
+    }
+
+
+
+
+
+
 
 
     //수강생 정보 수정
