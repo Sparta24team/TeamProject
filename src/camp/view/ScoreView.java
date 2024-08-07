@@ -45,7 +45,10 @@ public class ScoreView {
         System.out.println("시험 점수를 등록합니다.");
         System.out.println("관리할 수강생의 번호를 입력하세요.");
         String studentId = sc.next();
-        scoreController.validateStudentId(studentId);
+        while (!scoreController.validateStudentId(studentId)) {
+            System.out.println("존재하지 않는 수강생 ID입니다. 다시 입력해주세요.");
+            studentId = sc.next();
+        }
 
         System.out.println("관리할 과목의 번호를 입력하세요.");
         String subjectId = sc.next();

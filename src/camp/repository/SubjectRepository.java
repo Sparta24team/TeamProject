@@ -39,6 +39,4 @@ public class SubjectRepository {
                 .findFirst()
                 .orElse(null);
     }
-
-
 }

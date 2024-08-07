@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Student {
     private final String studentId;
-    private final String studentName;
     private final List<Subject> subjects;
-    private final String status;
+    private String studentName;
+    private String status;
 
     public Student(String studentId, String studentName, List<Subject> subjects, String status) {
         this.studentId = studentId;
@@ -29,5 +29,15 @@ public class Student {
 
     public String getStatus() {
         return status;
+    }
+
+    // 추가된 메서드: 상태 설정
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    // 추가된 메서드: 이름 설정
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 }

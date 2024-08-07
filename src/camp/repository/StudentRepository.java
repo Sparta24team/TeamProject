@@ -29,4 +29,11 @@ public class StudentRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public void deleteStudent(String studentId) {
+        Student student = getStudentById(studentId);
+        if (student != null) {
+            studentStore.remove(student);
+        }
+    }
 }

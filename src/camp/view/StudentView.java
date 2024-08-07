@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+//
 public class StudentView {
     private final StudentController studentController;
     private static final Scanner sc = new Scanner(System.in);
@@ -16,6 +17,7 @@ public class StudentView {
         this.studentController = studentController;
     }
 
+    //displayStudentView
     public void displayStudentView() {
         boolean flag = true;
         while (flag) {
@@ -120,9 +122,18 @@ public class StudentView {
         List<Student> students = studentController.getAllStudents();
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
-            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
+            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s / 상태 : %s / 선택한 과목 : %s\n",
+                    student.getStudentId(), student.getStudentName(), student.getStatus(), student.getSubjects());
         }
         System.out.println("\n수강생 목록 조회 성공!");
+        System.out.print("수강생 정보 수정 또는 삭제 하시겠습니까?(수정하려면 '1'를 삭제하려면 '2' 입력해주세요.) : ");
+        type = sc.next();
+        if (type.equals("1")) {
+            modifyStudentNameOrStatus();
+        }
+        if (type.equals("2")) {
+            deleteStudent();
+        }
         System.out.println("상세정보를 조회하시겠습니까?(조회하려면 'Yes'를 뒤로가려면 '아무키나' 입력해주세요.)");
         type = sc.next();
         if (type.equalsIgnoreCase("Yes")) {
@@ -130,6 +141,41 @@ public class StudentView {
         }
     }
 
+    private void modifyStudentNameOrStatus() { // 추가된 코드
+        System.out.print("수정할 수강생의 고유번호를 입력해 주세요 :");
+        String studentId = sc.next().trim();
+        Student student = studentController.getStudentById(studentId);
+
+        System.out.println("수정할 항목을 선택하세요:");
+        System.out.println("1. 이름 수정");
+        System.out.println("2. 상태 수정");
+        System.out.print("선택: ");
+        String choice = sc.next();
+
+        if (choice.equals("1")) {
+            System.out.print("수정할 이름을 입력해 주세요 : ");
+            String newName = sc.next().trim();
+            studentController.updateStudentName(studentId, newName);
+            System.out.println("수강생 이름 변경 완료");
+        }
+        if (choice.equals("2")) {
+            System.out.print("수정할 상태를 입력해 주세요(예: Green, Red, Yellow) : ");
+            String newStatus = sc.next().trim();
+            if (newStatus.equalsIgnoreCase("Green") || newStatus.equalsIgnoreCase("Red") || newStatus.equalsIgnoreCase("Yellow")) {
+                studentController.updateStudentStatus(studentId, newStatus);
+                System.out.println("상태 수정 완료");
+            }
+        }
+    }
+
+    private void deleteStudent() { // 추가된 코드
+        System.out.print("삭제할 수강생의 고유번호를 입력해 주세요 :");
+        String studentId = sc.next().trim();
+        studentController.deleteStudent(studentId);
+        System.out.println("수강생 삭제 완료");
+    }
+
+    //특정 학생의 특정 과목에 대한 회차별 등급을 조회
     private void inquireRoundGradeBySubject() {
         System.out.println("관리할 수강생의 번호를 입력하세요.");
         String studentId = sc.next();

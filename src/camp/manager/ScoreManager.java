@@ -1,12 +1,13 @@
 package camp.manager;
 
-import camp.model.Score;
+import develop.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
 import camp.repository.ScoreRepository;
 import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class ScoreManager {
@@ -14,6 +15,7 @@ public class ScoreManager {
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
 
+    // ScoreRepository, StudentRepository, SubjectRepository 객체 초기화
     public ScoreManager(ScoreRepository scoreRepository, StudentRepository studentRepository, SubjectRepository subjectRepository) {
         this.scoreRepository = scoreRepository;
         this.studentRepository = studentRepository;
@@ -90,7 +92,6 @@ public class ScoreManager {
         }
     }
 
-    // 1247: 수강생의 과목별 평균 등급 조회 메서드 수정
     public void inquireStudentAverageGrade(String studentId) {
         validateStudentId(studentId);
 
@@ -130,16 +131,12 @@ public class ScoreManager {
         System.out.println("\n평균 등급 조회 완료!");
     }
 
-    public void validateStudentId(String studentId) {
-        if (studentRepository.getStudentById(studentId) == null) {
-            throw new IllegalArgumentException("존재하지 않는 수강생 ID입니다.");
-        }
+    public boolean validateStudentId(String studentId) {
+        return studentRepository.getStudentById(studentId) != null;
     }
 
-    public void validateSubjectId(String subjectId) {
-        if (subjectRepository.getSubjectById(subjectId) == null) {
-            throw new IllegalArgumentException("존재하지 않는 과목 ID입니다.");
-        }
+    public boolean validateSubjectId(String subjectId) {
+        return subjectRepository.getSubjectById(subjectId) != null;
     }
 
     public void validateRound(int round) {
@@ -179,6 +176,7 @@ public class ScoreManager {
         if (subject == null) {
             throw new IllegalArgumentException("존재하지 않는 과목 ID입니다.");
         }
+
 
         String subjectType = subject.getSubjectType();
         if ("MANDATORY".equals(subjectType)) {

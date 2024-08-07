@@ -1,6 +1,6 @@
 package camp.manager;
 
-import camp.model.Score;
+import develop.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
 import camp.repository.ScoreRepository;
@@ -57,5 +57,27 @@ public class StudentManager {
         if (!hasScores) {
             System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
         }
+    }
+
+    public Student getStudentById(String studentId) { // 추가된 코드
+        return studentRepository.getStudentById(studentId);
+    }
+
+    public void updateStudentName(String studentId, String newName) { // 추가된 코드
+        Student student = studentRepository.getStudentById(studentId);
+        if (student != null) {
+            student.setStudentName(newName);
+        }
+    }
+
+    public void updateStudentStatus(String studentId, String newStatus) { // 추가된 코드
+        Student student = studentRepository.getStudentById(studentId);
+        if (student != null) {
+            student.setStatus(newStatus);
+        }
+    }
+
+    public void deleteStudent(String studentId) { // 추가된 코드
+        studentRepository.deleteStudent(studentId);
     }
 }
