@@ -42,12 +42,21 @@ public class CampManagementApplication {
     private static void displayMainView() throws InterruptedException {
         boolean flag = true;
         while (flag) {
-            System.out.println("\n==================================");
-            System.out.println("내일배움캠프 수강생 관리 프로그램 실행 중...");
-            System.out.println("1. 수강생 관리");
-            System.out.println("2. 점수 관리");
-            System.out.println("3. 프로그램 종료");
-            System.out.print("관리 항목을 선택하세요...");
+
+            System.out.println("\n======================================================");
+            System.out.println("||\t\t내일배움캠프 수강생 관리 프로그램 실행 중..\t\t\t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t\t 1. 수강생 관리 메뉴 \t\t\t\t\t\t\t||");
+            System.out.println("||\t\t 2. 점수 관리 메뉴 \t\t\t\t\t\t\t||");
+            System.out.println("||\t\t 3. 메인 화면 이동 \t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t\t 선택하세요 \t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("======================================================\n");
+
+
             int input = sc.nextInt();
 
             switch (input) {

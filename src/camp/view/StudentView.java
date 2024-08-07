@@ -27,6 +27,19 @@ public class StudentView {
             System.out.println("2. 수강생 목록 조회");
             System.out.println("3. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
+            System.out.println("\n======================================================");
+            System.out.println("||\t\t\t\t수강생 관리 실행 중...\t\t\t\t\t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t\t 1. 수강생 등록 \t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t 2. 수강생 목록 조회 \t\t\t\t\t\t\t||");
+            System.out.println("||\t\t 3. 메인 화면 이동 \t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t\t 선택하세요 \t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("======================================================\n");
+
             int input = sc.nextInt();
 
             switch (input) {

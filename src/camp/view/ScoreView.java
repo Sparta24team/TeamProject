@@ -15,15 +15,24 @@ public class ScoreView {
     public void displayScoreView() {
         boolean flag = true;
         while (flag) {
-            System.out.println("==================================");
-            System.out.println("점수 관리 실행 중...");
-            System.out.println("1. 수강생의 과목별 시험 회차 및 점수 등록");
-            System.out.println("2. 수강생의 과목별 회차 점수 수정");
-            System.out.println("3. 수강생의 특정 과목 회차별 등급 조회");
-            System.out.println("4. 특정 상태 수강생들의 필수 과목 평균 등급 조회");
-            System.out.println("5. 수강생의 과목별 평균 등급 조회");
-            System.out.println("6. 메인 화면 이동");
-            System.out.print("관리 항목을 선택하세요...");
+
+            System.out.println("\n======================================================");
+            System.out.println("||\t Tomorrow Learning Camp 학생 관리 프로그램 실행중.. \t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t 1. 학생별 과목의 시험 회차 및 점수 등록 \t\t\t\t||");
+            System.out.println("||\t 2. 학생별 과목의 회차 점수 수정 \t\t\t\t\t\t||");
+            System.out.println("||\t 3. 학생별 과목의 회차별 성적 조회 \t\t\t\t\t||");
+            System.out.println("||\t 4. 상태별 학생의 필수 과목 평균 성적 조회 \t\t\t\t||");
+            System.out.println("||\t 5. 학생별 과목의 평균 성적 조회 \t\t\t\t\t\t||");
+            System.out.println("||\t 6. 메인 화면으로 이동 \t\t\t\t\t\t\t\t||");
+            System.out.println("||--------------------------------------------------||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||\t 선택하세요 \t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
+            System.out.println("======================================================\n");
+
+
             int input = sc.nextInt();
 
             switch (input) {
