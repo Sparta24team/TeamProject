@@ -11,10 +11,10 @@ import java.util.List;
 
 /**
  * ScoreManager: 학생의 점수 관련 작업을 관리하고 처리.
- -
+ * -
  * 이 클래스는 ScoreRepository, StudentRepository, SubjectRepository 객체를 사용하여
  * 점수 생성, 조회, 업데이트, 검증 작업을 수행.
- -
+ * -
  * 주요 기능:
  * - 새로운 점수 생성
  * - 점수 업데이트
@@ -39,7 +39,7 @@ public class ScoreManager {
         this.subjectRepository = subjectRepository;
     }
 
-    //특정 학생이 특정 과목에서 특정 회차에 받은 점수를 생성
+    // 특정 학생이 특정 과목에서 특정 회차에 받은 점수를 생성
     public void createScore(String studentId, String subjectId, int round, int scoreValue) {
         validateStudentId(studentId);
         validateSubjectId(subjectId);
@@ -127,6 +127,7 @@ public class ScoreManager {
         System.out.println("==================================");
 
         boolean hasScores = false;
+
         for (Subject subject : subjectRepository.getAllSubjects()) {
             int totalScore = 0;
             int scoreCount = 0;
@@ -149,27 +150,27 @@ public class ScoreManager {
         if (!hasScores) {
             System.out.println("해당 수강생에 대한 점수 데이터가 없습니다.");
         }
-
-        System.out.println("\n평균 등급 조회 완료!");
     }
+
 
     // 학생 ID를 검증
     public boolean validateStudentId(String studentId) {
         return studentRepository.getStudentById(studentId) != null;
     }
 
+    // 과목 ID를 검증
     public boolean validateSubjectId(String subjectId) {
         return subjectRepository.getSubjectById(subjectId) != null;
     }
 
-    // 과목 ID를 검증
+    // 회차를 검증
     public void validateRound(int round) {
         if (round < 1 || 10 < round) {
             throw new IllegalArgumentException("회차는 10 초과 및 1 미만의 수가 될 수 없습니다. (회차 범위: 1 ~ 10)");
         }
     }
 
-    // 주어진 점수가 유효한지 검증
+    // 점수값을 검증
     public void validateScoreValue(int scoreValue) {
         if (scoreValue < 0 || 100 < scoreValue) {
             throw new IllegalArgumentException("점수는 100 초과 및 음수가 될 수 없습니다. (점수 범위: 0 ~ 100)");
@@ -206,7 +207,6 @@ public class ScoreManager {
         if (subject == null) {
             throw new IllegalArgumentException("존재하지 않는 과목 ID입니다.");
         }
-
 
         String subjectType = subject.getSubjectType();
         if ("MANDATORY".equals(subjectType)) {
