@@ -1,6 +1,7 @@
 package camp.model;
 
 import camp.dataField.DataField;
+import camp.management.Management;
 
 public class Score {
 
@@ -31,9 +32,9 @@ public class Score {
 //    public void setValue(int value){
 //        this.value = value;
 //    }
-    public void setValue(int value){
+    public void setValue(String subjectType,int value){
       this.value = value;
-      this.grade = calculateGrade(value);
+      this.grade = DataField.calculateSubjectScoreGrade(subjectType,value);
     }
 
     public int getRound() {
@@ -55,6 +56,7 @@ public class Score {
     public String getGrade(){
         return grade;
     }
+
 
     public int getScoreValue() {
         return value;

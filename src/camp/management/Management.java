@@ -173,21 +173,33 @@ public class Management extends DataField {
         System.out.println("시험 점수를 수정합니다...");
         System.out.println("==================================");
         // 기능 구현
+
+        String lambdaSubjectId = subjectId;
+
         for (Score score : scoreStore) {
-            if (score.getStudentId().equals(studentId) && (
+            if (score.getStudentId().equals(studentId) &&
                     score.getSubjectId().equals(subjectId)&&
-                            score.getRound() == round)){
-                score.setValue(value);
+                            score.getRound() == round){
+
+                Subject subject = subjectStore.stream()
+                        .filter(s -> s.getSubjectId().equals(lambdaSubjectId))
+                        .findFirst()
+                        .orElse(null);
+                String subjectType = subject != null ? subject.getSubjectType() : null;
+
+                if (subjectType != null) {
+                    score.setValue(subjectType, value);
+                } else {
+                    System.out.println("해당 subjectId에 대한 subjectType을 찾을 수 없습니다.");
+                }
+                System.out.println("사용자 id: " + score.getStudentId());
+                System.out.println("과목  id: " + score.getSubjectId());
+                System.out.println("회차    : " + score.getRound());
+                System.out.println("점수    : " + score.getValue());
+                System.out.println("==============================");
 
                 break;
             }
-        }
-        for (Score score : scoreStore) {
-            System.out.println("사용자 id: " + score.getStudentId());
-            System.out.println("과목  id: " + score.getSubjectId());
-            System.out.println("회차    : " + score.getRound());
-            System.out.println("점수    : " + score.getValue());
-            System.out.println("==============================");
         }
         System.out.println("\n점수 수정 성공!");
 
