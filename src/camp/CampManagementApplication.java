@@ -2,6 +2,7 @@ package camp;
 
 import camp.config.ApplicationConfig;
 import camp.io.InputManager;
+import camp.io.View;
 import camp.model.Score;
 import camp.model.Student;
 import camp.model.StudentAverageGrade;
@@ -18,7 +19,8 @@ public class CampManagementApplication {
 
     private static StudentService studentService = applicationConfig.studentService();
     private static ScoreService scoreService = applicationConfig.scoreService();
-    private static InputManager inputManager = new InputManager();
+    private static View view = new View();
+    private static InputManager inputManager = new InputManager(view);
 
     public static void main(String[] args) {
         subjectRepositoryInitializer.initialize();
@@ -26,8 +28,8 @@ public class CampManagementApplication {
             try {
                 displayMainView();
             } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
+                view.printErrorMessage(e.getMessage());
+                view.printExitProgramMessageOnError();
             }
         }
     }
@@ -35,8 +37,8 @@ public class CampManagementApplication {
     private static void displayMainView() throws InterruptedException {
         boolean flag = true;
         while (flag) {
-            System.out.println("\n==================================");
-            System.out.println("내일배움캠프 수강생 관리 프로그램 실행 중...");
+            view.printDividingLine();
+            view.printApplicationStartMessage();
 
             int userChoice = inputManager.getUserChoiceFromManagementOptions();
             switch (userChoice) {
@@ -44,37 +46,38 @@ public class CampManagementApplication {
                 case 2 -> displayScoreView(); // 점수 관리
                 case 3 -> flag = false; // 프로그램 종료
                 default -> {
-                    System.out.println("잘못된 입력입니다.\n되돌아갑니다!");
+                    view.printWrongInputMessage();
+                    view.printReturnMessage();
                     Thread.sleep(2000);
                 }
             }
         }
-        System.out.println("프로그램을 종료합니다.");
+        view.printExitProgramMessage();
     }
 
     private static void displayStudentView() {
         boolean flag = true;
         while (flag) {
-            System.out.println("==================================");
-            System.out.println("수강생 관리 실행 중...");
+            view.printDividingLine();
+            view.printRunningStudentManagementMessage();
 
             int userChoice = inputManager.getUserChoiceFromStudentManagementOptions();
             switch (userChoice) {
                 case 1 -> createStudent(); // 수강생 등록
-                case 2 -> inquireStudent(); // 수강생 목록 조회
+                case 2 -> inquireStudents(); // 수강생 목록 조회
                 case 3 -> flag = false; // 메인 화면 이동
                 default -> {
-                    System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
+                    view.printWrongInputMessage();
+                    view.printMoveToMainViewMessage();
                     flag = false;
                 }
             }
-
         }
     }
 
     // 수강생 등록
     private static void createStudent() {
-        System.out.println("\n수강생을 등록합니다...");
+        view.printCreateStudentMessage();
 
         String studentName = inputManager.getStudentName();
         String status = inputManager.getStudentStatus();
@@ -82,18 +85,21 @@ public class CampManagementApplication {
 
         studentService.registerStudent(studentName, status, subjectIds);
 
-        System.out.println("수강생 등록 성공!\n");
+        view.printCreatedStudentMessage();
     }
 
     // 수강생 목록 조회
-    private static void inquireStudent() {
-        System.out.println("\n수강생 목록을 조회합니다...");
+    private static void inquireStudents() {
+        view.printDividingLine();
+        view.printInquireStudentMessage();
+
         List<Student> students = studentService.getStudents();
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
-            System.out.printf((i + 1) + ". 고유 번호 : %s / 이름 : %s\n", student.getStudentId(), student.getStudentName());
+            view.printInquireStudentsResult(i, student.getStudentId(), student.getStudentName());
         }
-        System.out.println("\n수강생 목록 조회 성공!");
+
+        view.printInquiredStudentMessage();
 
         String userChoice = inputManager.getUserChoiceFromDetailInquiryOptions();
         if (userChoice.equals("Yes")) {
@@ -105,10 +111,10 @@ public class CampManagementApplication {
     private static void displayScoreView() {
         boolean flag = true;
         while (flag) {
-            System.out.println("==================================");
-            System.out.println("점수 관리 실행 중...");
+            view.printDividingLine();
+            view.printRunningScoreManagementMessage();
 
-            int userChoice = inputManager.getUserChoiceFromUserManagementOptions();
+            int userChoice = inputManager.getUserChoiceFromScoreManagementOptions();
             switch (userChoice) {
                 case 1 -> createScore(); // 수강생의 과목별 시험 회차 및 점수 등록
                 case 2 -> updateRoundScoreBySubject(); // 수강생의 과목별 회차 점수 수정
@@ -117,7 +123,8 @@ public class CampManagementApplication {
                 case 5 -> inquireStudentAverageGrade(); // 수강생의 과목별 평균 등급 조회
                 case 6 -> flag = false; // 메인 화면 이동
                 default -> {
-                    System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
+                    view.printWrongInputMessage();
+                    view.printMoveToMainViewMessage();
                     flag = false;
                 }
             }
@@ -126,7 +133,7 @@ public class CampManagementApplication {
 
     // 수강생의 과목별 시험 회차 및 점수 등록
     private static void createScore() {
-        System.out.println("시험 점수를 등록합니다.");
+        view.printCreateScoreMessage();
         String studentId = inputManager.getStudentId();
 
         String subjectId = inputManager.getSubjectId();
@@ -137,12 +144,9 @@ public class CampManagementApplication {
         int scoreValue = inputManager.getScoreValue();
         validateScoreValue(scoreValue);
 
-        System.out.println("시험 점수를 등록합니다.");
         scoreService.registerScore(studentId, subjectId, round, scoreValue);
-        System.out.println();
-        System.out.printf("%s번 수강생 %s 과목 %d회차 %d점수 등록 성공!\n", studentId, subjectId, round, scoreValue);
 
-        System.out.println("\n점수 등록 성공!");
+        view.printCreatedScoreMessage(studentId, subjectId, round, scoreValue);
     }
 
     private static void validateRound(int round) {
@@ -159,95 +163,75 @@ public class CampManagementApplication {
 
     // 수강생의 과목별 회차 점수 수정     set
     private static void updateRoundScoreBySubject() {
+        view.printDividingLine();
+        view.printUpdateScoreMessage();
+
         String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
-
         String subjectId = inputManager.getSubjectId();   //과목
-
         int round = inputManager.getRound();//회차
-
         int value = inputManager.getScoreValue();       //점수
-
-        System.out.println("시험 점수를 수정합니다...");
-        System.out.println("==================================");
 
         Score updatedScore = scoreService.updateScore(studentId, subjectId, round, value);
 
-        System.out.println("사용자 id: " + updatedScore.getStudentId());
-        System.out.println("과목  id: " + updatedScore.getSubjectId());
-        System.out.println("회차    : " + updatedScore.getRound());
-        System.out.println("점수    : " + updatedScore.getValue());
-        System.out.println("==============================");
-        System.out.println("\n점수 수정 성공!");
-
+        view.printUpdatedDetail(updatedScore.getStudentId(), updatedScore.getSubjectId(), updatedScore.getRound(), updatedScore.getValue());
+        view.printDividingLine();
+        view.printUpdatedScoreMessage();
     }
 
     // 수강생의 특정 과목 회차별 등급 조회
     // 코드 순서 변경 : 수강생 ID, 과목 ID 유효성 각각 조회로 변경함
     private static void inquireRoundGradeBySubject() {
+        view.printDividingLine();
+        view.printInquireGradeMessage();
+
         String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
-
-        //과목 ID 입력 받기
         String subjectId = inputManager.getSubjectId();
-
-        System.out.println("회차별 등급을 조회합니다...");
-        System.out.println("==================================");
 
         List<Score> scores = scoreService.getScoresByStudentIdAndSubjectId(studentId, subjectId);
         if (scores.isEmpty()) {
-            System.out.println("수강생의 해당 과목에 대한 기록이 없습니다.");
+            view.printDoesNotExistStudentSubjectData();
             return;
         }
+
+        view.printDividingLine();
         for (Score score : scores) {
-            System.out.printf("회차 = %d%n 등급 = %s%n", score.getRound(), score.getGrade());
-            System.out.println("==================================");
+            view.printInquiredGradeResult(score.getRound(), score.getGrade());
         }
 
-        System.out.println("\n등급 조회 완료!");
+        view.printInquiredGradeMessage();
     }
 
     // 수강생의 과목별 평균 등급 조회
     private static void inquireStudentAverageGrade() {
+        view.printDividingLine();
+        view.printInquireAverageGradeMessage();
         String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
 
         Student student = studentService.getStudent(studentId);
         if (student == null) {
-            System.out.println("존재하지 않는 수강생 ID입니다.");
+            view.printDoesNotExistStudentIdMessage();
             return;
         }
 
-        System.out.println("과목별 평균 등급을 조회합니다...");
-        System.out.println("==================================");
-
         List<SubjectAverageGrade> subjectAverageGrades = scoreService.getSubjectAverageGradesByStudentId(studentId);
         for (SubjectAverageGrade subjectAverageGrade : subjectAverageGrades) {
-            System.out.printf("과목: %s, 평균 등급: %s%n", subjectAverageGrade.getSubjectName(), subjectAverageGrade.getAverageGrade());
+            view.printInquireStudentAverageGradeResult(subjectAverageGrade.getSubjectName(), subjectAverageGrade.getAverageGrade());
         }
-        System.out.println("\n평균 등급 조회 완료!");
+        view.printInquiredAverageGradeMessage();
     }
 
     // 특정 상태 수강생들의 필수 과목 평균 등급 조회
     private static void inquireMandatoryGrades() {
-        System.out.println("특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
+        view.printDividingLine();
+        view.printInquireAverageGradeFromMandatorySubjectByStatusMessage();
         String status = inputManager.getStudentStatus(); // 조회할 수강생 상태 status 저장
 
         List<StudentAverageGrade> studentAverageGrades = scoreService.getAverageGradesByStatusAndSubjectType(status, "MANDATORY");
 
         for (StudentAverageGrade studentAverageGrade : studentAverageGrades) {
-            System.out.println("수강생 이름: " + studentAverageGrade.getStudentName());
-            System.out.println("평균 등급: " + studentAverageGrade.getAverageGrade());
+            view.printInquireAverageGradeFromMandatorySubjectByStatusResult(studentAverageGrade.getStudentName(), studentAverageGrade.getAverageGrade());
         }
 
-        System.out.println("\n등급 조회 완료!");
-    }
-
-    //수강생 ID에 해당하는 수강생 반환
-    private static Student getStudentById(String studentId) {
-        List<Student> students = studentService.getStudents();
-        for (Student student : students) {
-            if (student.getStudentId().equals(studentId)) {
-                return student;
-            }
-        }
-        return null;
+        view.printInquiredGradeMessage();
     }
 }
