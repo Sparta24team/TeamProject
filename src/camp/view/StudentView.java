@@ -8,16 +8,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//
+/**
+ * StudentView : 사용자 인터페이스를 통해 수강생 관리 기능을 제공
+ -
+ * 주요 기능:
+ * - 수강생 관리 메뉴 표시 및 사용자 입력 처리
+ * - 수강생 등록
+ * - 수강생 목록 조회
+ * - 수강생 정보 수정 및 삭제
+ * - 수강생의 특정 과목에 대한 회차별 등급 조회
+ */
+
 public class StudentView {
     private final StudentController studentController;
     private static final Scanner sc = new Scanner(System.in);
 
+    // StudentController 객체 초기화
     public StudentView(StudentController studentController) {
         this.studentController = studentController;
     }
 
-    //displayStudentView
+    // 수강생 관리 메뉴 표시하고 사용자 입력을 처리
     public void displayStudentView() {
         boolean flag = true;
         while (flag) {
@@ -41,6 +52,7 @@ public class StudentView {
         }
     }
 
+    // 새로운 수강생 등록
     private void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
@@ -97,6 +109,7 @@ public class StudentView {
         System.out.println("수강생 등록 성공!\n");
     }
 
+    // 과목 ID로 과목을 찾음
     private Subject findSubjectById(String subjectId) {
         List<Subject> subjects = studentController.getAllSubjects(); // 수정된 부분
         for (Subject subject : subjects) {
@@ -107,6 +120,7 @@ public class StudentView {
         return null;
     }
 
+    // 과목 중복 여부를 확인
     private boolean isDuplicate(List<Subject> subjects, Subject subject) {
         for (Subject s : subjects) {
             if (s.getSubjectId().equals(subject.getSubjectId())) {
@@ -116,6 +130,7 @@ public class StudentView {
         return false;
     }
 
+    // 모든 수강생 목록을 조회하고, 수정 및 삭제를 처리
     private void inquireStudent() {
         String type;
         System.out.println("\n수강생 목록을 조회합니다...");
@@ -141,6 +156,7 @@ public class StudentView {
         }
     }
 
+    // 수강생의 이름 또는 상태를 수정
     private void modifyStudentNameOrStatus() { // 추가된 코드
         System.out.print("수정할 수강생의 고유번호를 입력해 주세요 :");
         String studentId = sc.next().trim();
@@ -168,14 +184,15 @@ public class StudentView {
         }
     }
 
-    private void deleteStudent() { // 추가된 코드
+    // 수강생을 삭제
+    private void deleteStudent() {
         System.out.print("삭제할 수강생의 고유번호를 입력해 주세요 :");
         String studentId = sc.next().trim();
         studentController.deleteStudent(studentId);
         System.out.println("수강생 삭제 완료");
     }
 
-    //특정 학생의 특정 과목에 대한 회차별 등급을 조회
+    // 특정 학생의 특정 과목에 대한 회차별 등급을 조회
     private void inquireRoundGradeBySubject() {
         System.out.println("관리할 수강생의 번호를 입력하세요.");
         String studentId = sc.next();

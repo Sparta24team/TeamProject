@@ -1,7 +1,6 @@
 package camp.manager;
 
 import camp.model.Score;
-import camp.model.Score;
 import camp.model.Student;
 import camp.model.Subject;
 import camp.repository.ScoreRepository;
