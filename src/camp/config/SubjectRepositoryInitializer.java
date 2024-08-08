@@ -1,4 +1,4 @@
-package camp;
+package camp.config;
 
 import camp.model.Subject;
 import camp.repository.SubjectRepository;

@@ -1,29 +1,31 @@
 package camp;
 
-import camp.config.ApplicationConfig;
-import camp.io.InputManager;
-import camp.io.View;
+import camp.dto.StudentAverageGrade;
+import camp.dto.SubjectAverageGrade;
+import camp.input.InputManager;
 import camp.model.Score;
 import camp.model.Student;
-import camp.model.StudentAverageGrade;
-import camp.model.SubjectAverageGrade;
 import camp.service.ScoreService;
 import camp.service.StudentService;
+import camp.view.View;
 import java.util.List;
 import java.util.Set;
 
 public class CampManagementApplication {
 
-    private static ApplicationConfig applicationConfig = new ApplicationConfig();
-    private static SubjectRepositoryInitializer subjectRepositoryInitializer = applicationConfig.subjectRepositoryInitializer();
+    private final StudentService studentService;
+    private final ScoreService scoreService;
+    private final InputManager inputManager;
+    private final View view;
 
-    private static StudentService studentService = applicationConfig.studentService();
-    private static ScoreService scoreService = applicationConfig.scoreService();
-    private static View view = new View();
-    private static InputManager inputManager = new InputManager(view);
+    public CampManagementApplication(StudentService studentService, ScoreService scoreService, InputManager inputManager, View view) {
+        this.studentService = studentService;
+        this.scoreService = scoreService;
+        this.inputManager = inputManager;
+        this.view = view;
+    }
 
-    public static void main(String[] args) {
-        subjectRepositoryInitializer.initialize();
+    public void run() {
         while (true) {
             try {
                 displayMainView();
@@ -34,7 +36,7 @@ public class CampManagementApplication {
         }
     }
 
-    private static void displayMainView() throws InterruptedException {
+    private void displayMainView() throws InterruptedException {
         boolean flag = true;
         while (flag) {
             view.printDividingLine();
@@ -55,7 +57,7 @@ public class CampManagementApplication {
         view.printExitProgramMessage();
     }
 
-    private static void displayStudentView() {
+    private void displayStudentView() {
         boolean flag = true;
         while (flag) {
             view.printDividingLine();
@@ -76,7 +78,7 @@ public class CampManagementApplication {
     }
 
     // 수강생 등록
-    private static void createStudent() {
+    private void createStudent() {
         view.printCreateStudentMessage();
 
         String studentName = inputManager.getStudentName();
@@ -89,7 +91,7 @@ public class CampManagementApplication {
     }
 
     // 수강생 목록 조회
-    private static void inquireStudents() {
+    private void inquireStudents() {
         view.printDividingLine();
         view.printInquireStudentMessage();
 
@@ -108,7 +110,7 @@ public class CampManagementApplication {
     }
 
     //1. 866766 / park
-    private static void displayScoreView() {
+    private void displayScoreView() {
         boolean flag = true;
         while (flag) {
             view.printDividingLine();
@@ -132,7 +134,7 @@ public class CampManagementApplication {
     }
 
     // 수강생의 과목별 시험 회차 및 점수 등록
-    private static void createScore() {
+    private void createScore() {
         view.printCreateScoreMessage();
         String studentId = inputManager.getStudentId();
 
@@ -149,20 +151,20 @@ public class CampManagementApplication {
         view.printCreatedScoreMessage(studentId, subjectId, round, scoreValue);
     }
 
-    private static void validateRound(int round) {
+    private void validateRound(int round) {
         if (round < 1 || 10 < round) {
             throw new IllegalArgumentException("회차는 10 초과 및 1 미만의 수가 될 수 없습니다. (회차 범위: 1 ~ 10)");
         }
     }
 
-    private static void validateScoreValue(int scoreValue) {
+    private void validateScoreValue(int scoreValue) {
         if (scoreValue < 0 || 100 < scoreValue) {
             throw new IllegalArgumentException("점수는 100 초과 및 음수가 될 수 없습니다. (점수 범위: 0 ~ 100)");
         }
     }
 
     // 수강생의 과목별 회차 점수 수정     set
-    private static void updateRoundScoreBySubject() {
+    private void updateRoundScoreBySubject() {
         view.printDividingLine();
         view.printUpdateScoreMessage();
 
@@ -180,7 +182,7 @@ public class CampManagementApplication {
 
     // 수강생의 특정 과목 회차별 등급 조회
     // 코드 순서 변경 : 수강생 ID, 과목 ID 유효성 각각 조회로 변경함
-    private static void inquireRoundGradeBySubject() {
+    private void inquireRoundGradeBySubject() {
         view.printDividingLine();
         view.printInquireGradeMessage();
 
@@ -202,7 +204,7 @@ public class CampManagementApplication {
     }
 
     // 수강생의 과목별 평균 등급 조회
-    private static void inquireStudentAverageGrade() {
+    private void inquireStudentAverageGrade() {
         view.printDividingLine();
         view.printInquireAverageGradeMessage();
         String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
@@ -221,7 +223,7 @@ public class CampManagementApplication {
     }
 
     // 특정 상태 수강생들의 필수 과목 평균 등급 조회
-    private static void inquireMandatoryGrades() {
+    private void inquireMandatoryGrades() {
         view.printDividingLine();
         view.printInquireAverageGradeFromMandatorySubjectByStatusMessage();
         String status = inputManager.getStudentStatus(); // 조회할 수강생 상태 status 저장
@@ -229,7 +231,8 @@ public class CampManagementApplication {
         List<StudentAverageGrade> studentAverageGrades = scoreService.getAverageGradesByStatusAndSubjectType(status, "MANDATORY");
 
         for (StudentAverageGrade studentAverageGrade : studentAverageGrades) {
-            view.printInquireAverageGradeFromMandatorySubjectByStatusResult(studentAverageGrade.getStudentName(), studentAverageGrade.getAverageGrade());
+            view.printInquireAverageGradeFromMandatorySubjectByStatusResult(studentAverageGrade.getStudentName(),
+                    studentAverageGrade.getAverageGrade());
         }
 
         view.printInquiredGradeMessage();

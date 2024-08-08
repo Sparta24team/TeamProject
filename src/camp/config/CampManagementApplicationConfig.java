@@ -1,17 +1,16 @@
 package camp.config;
 
-import camp.SubjectRepositoryInitializer;
-import camp.model.GradeGenerator;
 import camp.repository.ScoreRepository;
 import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
 import camp.service.ScoreService;
 import camp.service.StudentService;
 
-public class ApplicationConfig {
+public class CampManagementApplicationConfig {
 
-    public SubjectRepositoryInitializer subjectRepositoryInitializer() {
-        return new SubjectRepositoryInitializer(subjectRepository());
+    public void initializeSubjectRepository() {
+        SubjectRepositoryInitializer subjectRepositoryInitializer = new SubjectRepositoryInitializer(subjectRepository());
+        subjectRepositoryInitializer.initialize();
     }
 
     public StudentService studentService() {
@@ -19,7 +18,7 @@ public class ApplicationConfig {
     }
 
     public ScoreService scoreService() {
-        return ScoreService.getInstance(scoreRepository(), studentRepository(), subjectRepository(), new GradeGenerator());
+        return ScoreService.getInstance(scoreRepository(), studentRepository(), subjectRepository());
     }
 
     public StudentRepository studentRepository() {

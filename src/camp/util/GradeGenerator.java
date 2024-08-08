@@ -1,11 +1,14 @@
-package camp.model;
+package camp.util;
 
 public class GradeGenerator {
 
     private static final String SUBJECT_TYPE_MANDATORY = "MANDATORY";
     private static final String SUBJECT_TYPE_CHOICE = "CHOICE";
 
-    public String generateGrade(String subjectType, int scoreValue) {
+    private GradeGenerator() {
+    }
+
+    public static String generateGrade(String subjectType, int scoreValue) {
         if (SUBJECT_TYPE_MANDATORY.equals(subjectType)) {
             if (scoreValue >= 95) {
                 return "A";

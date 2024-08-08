@@ -1,4 +1,4 @@
-package camp.model;
+package camp.dto;
 
 public class StudentAverageGrade {
 

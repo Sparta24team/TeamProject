@@ -1,5 +1,6 @@
-package camp.io;
+package camp.input;
 
+import camp.view.View;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;

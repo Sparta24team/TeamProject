@@ -1,4 +1,4 @@
-package camp.io;
+package camp.view;
 
 public class View {
 

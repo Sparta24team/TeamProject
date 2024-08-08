@@ -1,14 +1,14 @@
 package camp.service;
 
-import camp.model.GradeGenerator;
+import camp.dto.StudentAverageGrade;
+import camp.dto.SubjectAverageGrade;
 import camp.model.Score;
 import camp.model.Student;
-import camp.model.StudentAverageGrade;
 import camp.model.Subject;
-import camp.model.SubjectAverageGrade;
 import camp.repository.ScoreRepository;
 import camp.repository.StudentRepository;
 import camp.repository.SubjectRepository;
+import camp.util.GradeGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,20 +21,16 @@ public class ScoreService {
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
 
-    private final GradeGenerator gradeGenerator;
-
-    private ScoreService(ScoreRepository scoreRepository, StudentRepository studentRepository, SubjectRepository subjectRepository,
-            GradeGenerator gradeGenerator) {
+    private ScoreService(ScoreRepository scoreRepository, StudentRepository studentRepository, SubjectRepository subjectRepository) {
         this.scoreRepository = scoreRepository;
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
-        this.gradeGenerator = gradeGenerator;
     }
 
-    public static ScoreService getInstance(ScoreRepository scoreRepository, StudentRepository studentRepository, SubjectRepository subjectRepository,
-            GradeGenerator gradeGenerator) {
+    public static ScoreService getInstance(ScoreRepository scoreRepository, StudentRepository studentRepository,
+            SubjectRepository subjectRepository) {
         if (Objects.isNull(instance)) {
-            instance = new ScoreService(scoreRepository, studentRepository, subjectRepository, gradeGenerator);
+            instance = new ScoreService(scoreRepository, studentRepository, subjectRepository);
         }
         return instance;
     }
@@ -51,7 +47,7 @@ public class ScoreService {
         }
 
         Subject subject = subjectRepository.findById(subjectId);
-        String grade = gradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
+        String grade = GradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
 
         Score score = new Score(subjectId, studentId, round, scoreValue, grade);
         scoreRepository.save(score);
@@ -69,7 +65,7 @@ public class ScoreService {
         }
 
         Subject subject = subjectRepository.findById(subjectId);
-        String grade = gradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
+        String grade = GradeGenerator.generateGrade(subject.getSubjectType(), scoreValue);
 
         return scoreRepository.updateScore(studentId, subjectId, round, scoreValue, grade);
     }
@@ -105,7 +101,7 @@ public class ScoreService {
                 }
             }
 
-            String grade = gradeGenerator.generateGrade(subjectType, totalScoreValue / count);
+            String grade = GradeGenerator.generateGrade(subjectType, totalScoreValue / count);
             StudentAverageGrade studentAverageGrade = new StudentAverageGrade(student.getStudentName(), grade);
             studentAverageGrades.add(studentAverageGrade);
         }
@@ -127,7 +123,7 @@ public class ScoreService {
                     totalScoreValue += score.getScoreValue();
                 }
 
-                String grade = gradeGenerator.generateGrade(subject.getSubjectType(), totalScoreValue / count);
+                String grade = GradeGenerator.generateGrade(subject.getSubjectType(), totalScoreValue / count);
                 SubjectAverageGrade subjectAverageGrade = new SubjectAverageGrade(subject.getSubjectName(), grade);
                 subjectAverageGrades.add(subjectAverageGrade);
             }
