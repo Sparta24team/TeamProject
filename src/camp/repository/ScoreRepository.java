@@ -33,10 +33,6 @@ public class ScoreRepository {
         scoreStore.add(score);
     }
 
-    public List<Score> findAll() {
-        return scoreStore;
-    }
-
     private String makeScoreId() {
         sequence++;
         return SCORE_CODE + sequence;

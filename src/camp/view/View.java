@@ -98,10 +98,6 @@ public class View {
         System.out.println("\n등급 조회 완료!");
     }
 
-    public void printDoesNotExistStudentIdMessage() {
-        System.out.println("존재하지 않는 수강생 ID입니다.");
-    }
-
     public void printInquireAverageGradeMessage() {
         System.out.println("과목별 평균 등급을 조회합니다...");
     }

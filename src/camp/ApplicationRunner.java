@@ -2,9 +2,9 @@ package camp;
 
 import camp.application.CampManagementApplication;
 import camp.config.CampManagementApplicationConfig;
+import camp.controller.ScoreController;
+import camp.controller.StudentController;
 import camp.input.InputManager;
-import camp.service.ScoreService;
-import camp.service.StudentService;
 import camp.view.View;
 
 public class ApplicationRunner {
@@ -12,14 +12,14 @@ public class ApplicationRunner {
     public static void main(String[] args) {
         CampManagementApplicationConfig campManagementApplicationConfig = new CampManagementApplicationConfig();
 
-        StudentService studentService = campManagementApplicationConfig.studentService();
-        ScoreService scoreService = campManagementApplicationConfig.scoreService();
+        ScoreController scoreController = campManagementApplicationConfig.scoreController();
+        StudentController studentController = campManagementApplicationConfig.studentController();
+        InputManager inputManager = campManagementApplicationConfig.inputManager();
+        View view = campManagementApplicationConfig.view();
         campManagementApplicationConfig.initializeSubjectRepository();
-        View view = new View();
-        InputManager inputManager = new InputManager(view);
 
         CampManagementApplication campManagementApplication = new CampManagementApplication(
-                studentService, scoreService, inputManager, view
+                studentController, scoreController, inputManager, view
         );
 
         campManagementApplication.run();

@@ -34,10 +34,6 @@ public class SubjectRepository {
         subjectStore.add(subject);
     }
 
-    public List<Subject> findAll() {
-        return subjectStore;
-    }
-
     public List<Subject> findAllById(Set<String> subjectIds) {
         return subjectStore.stream()
                 .filter(subject -> subjectIds.contains(subject.getSubjectId()))
