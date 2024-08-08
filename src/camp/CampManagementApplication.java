@@ -51,7 +51,7 @@ public class CampManagementApplication {
         while (flag) {
 
             System.out.println("\n======================================================");
-            System.out.println("||\t\t내일배움캠프 수강생 관리 프로그램 실행 중..\t\t\t||");
+            System.out.println("||\t\t내일배움캠프 수강생 관리 프로그램 실행 중..\t\t||");
             System.out.println("||\t\t\t\t\t\t\t\t\t\t\t\t\t||");
             System.out.println("||--------------------------------------------------||");
             System.out.println("||\t\t 1. 수강생 관리 메뉴 \t\t\t\t\t\t\t||");
