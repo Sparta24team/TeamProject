@@ -55,8 +55,4 @@ public class StudentService {
                 .count();
         return choiceSubjectCount < condition;
     }
-
-    public Student getStudent(String studentId) {
-        return studentRepository.findById(studentId);
-    }
 }

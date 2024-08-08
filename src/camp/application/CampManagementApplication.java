@@ -35,16 +35,16 @@ public class CampManagementApplication {
     }
 
     private void displayMainView() throws InterruptedException {
-        boolean flag = true;
-        while (flag) {
+        boolean isNotExitProgram = true;
+        while (isNotExitProgram) {
             view.printDividingLine();
             view.printApplicationStartMessage();
 
             int userChoice = inputManager.getUserChoiceFromManagementOptions();
             switch (userChoice) {
-                case 1 -> displayStudentView(); // 수강생 관리
-                case 2 -> displayScoreView(); // 점수 관리
-                case 3 -> flag = false; // 프로그램 종료
+                case 1 -> displayStudentManagementView();
+                case 2 -> displayScoreManagementView();
+                case 3 -> isNotExitProgram = false;
                 default -> {
                     view.printWrongInputMessage();
                     view.printReturnMessage();
@@ -55,29 +55,27 @@ public class CampManagementApplication {
         view.printExitProgramMessage();
     }
 
-    private void displayStudentView() {
-        boolean flag = true;
-        while (flag) {
+    private void displayStudentManagementView() {
+        boolean doesNotGoToMain = true;
+        while (doesNotGoToMain) {
             view.printDividingLine();
             view.printRunningStudentManagementMessage();
 
             int userChoice = inputManager.getUserChoiceFromStudentManagementOptions();
             switch (userChoice) {
-                case 1 -> createStudent(); // 수강생 등록
+                case 1 -> registerStudent(); // 수강생 등록
                 case 2 -> inquireStudents(); // 수강생 목록 조회
-                case 3 -> flag = false; // 메인 화면 이동
+                case 3 -> doesNotGoToMain = false; // 메인 화면 이동
                 default -> {
                     view.printWrongInputMessage();
                     view.printMoveToMainViewMessage();
-                    flag = false;
+                    doesNotGoToMain = false;
                 }
             }
         }
     }
 
-    // 수강생 등록
-
-    private void createStudent() {
+    private void registerStudent() {
         view.printCreateStudentMessage();
 
         String studentName = inputManager.getStudentName();
@@ -88,7 +86,6 @@ public class CampManagementApplication {
 
         view.printCreatedStudentMessage();
     }
-    // 수강생 목록 조회
 
     private void inquireStudents() {
         view.printDividingLine();
@@ -108,7 +105,7 @@ public class CampManagementApplication {
         }
     }
 
-    private void displayScoreView() {
+    private void displayScoreManagementView() {
         boolean flag = true;
         while (flag) {
             view.printDividingLine();
@@ -116,7 +113,7 @@ public class CampManagementApplication {
 
             int userChoice = inputManager.getUserChoiceFromScoreManagementOptions();
             switch (userChoice) {
-                case 1 -> createScore(); // 수강생의 과목별 시험 회차 및 점수 등록
+                case 1 -> registerScore(); // 수강생의 과목별 시험 회차 및 점수 등록
                 case 2 -> updateRoundScoreBySubject(); // 수강생의 과목별 회차 점수 수정
                 case 3 -> inquireRoundGradeBySubject(); // 수강생의 특정 과목 회차별 등급 조회
                 case 4 -> inquireMandatoryGrades(); // 특정 상태 수강생들의 필수 과목 평균 등급 조회
@@ -132,8 +129,7 @@ public class CampManagementApplication {
     }
 
     // 수강생의 과목별 시험 회차 및 점수 등록
-
-    private void createScore() {
+    private void registerScore() {
         view.printCreateScoreMessage();
         String studentId = inputManager.getStudentId();
 
@@ -162,16 +158,15 @@ public class CampManagementApplication {
         }
     }
 
-    // 수강생의 과목별 회차 점수 수정     set
-
+    // 수강생의 과목별 회차 점수 수정
     private void updateRoundScoreBySubject() {
         view.printDividingLine();
         view.printUpdateScoreMessage();
 
-        String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
-        String subjectId = inputManager.getSubjectId();   //과목
-        int round = inputManager.getRound();//회차
-        int value = inputManager.getScoreValue();       //점수
+        String studentId = inputManager.getStudentId();
+        String subjectId = inputManager.getSubjectId();
+        int round = inputManager.getRound();
+        int value = inputManager.getScoreValue();
 
         Score updatedScore = scoreService.updateScore(studentId, subjectId, round, value);
 
@@ -179,9 +174,8 @@ public class CampManagementApplication {
         view.printDividingLine();
         view.printUpdatedScoreMessage();
     }
-    // 수강생의 특정 과목 회차별 등급 조회
-    // 코드 순서 변경 : 수강생 ID, 과목 ID 유효성 각각 조회로 변경함
 
+    // 수강생의 특정 과목 회차별 등급 조회
     private void inquireRoundGradeBySubject() {
         view.printDividingLine();
         view.printInquireGradeMessage();
@@ -202,32 +196,28 @@ public class CampManagementApplication {
 
         view.printInquiredGradeMessage();
     }
-    // 수강생의 과목별 평균 등급 조회
 
+    // 수강생의 과목별 평균 등급 조회
     private void inquireStudentAverageGrade() {
         view.printDividingLine();
         view.printInquireAverageGradeMessage();
-        String studentId = inputManager.getStudentId(); // 관리할 수강생 고유 번호
 
-        Student student = studentService.getStudent(studentId);
-        if (student == null) {
-            view.printDoesNotExistStudentIdMessage();
-            return;
-        }
+        String studentId = inputManager.getStudentId();
 
         List<SubjectAverageGrade> subjectAverageGrades = scoreService.getSubjectAverageGradesByStudentId(studentId);
         for (SubjectAverageGrade subjectAverageGrade : subjectAverageGrades) {
             view.printInquireStudentAverageGradeResult(subjectAverageGrade.getSubjectName(), subjectAverageGrade.getAverageGrade());
         }
+
         view.printInquiredAverageGradeMessage();
     }
-    // 특정 상태 수강생들의 필수 과목 평균 등급 조회
 
+    // 특정 상태 수강생들의 필수 과목 평균 등급 조회
     private void inquireMandatoryGrades() {
         view.printDividingLine();
         view.printInquireAverageGradeFromMandatorySubjectByStatusMessage();
-        String status = inputManager.getStudentStatus(); // 조회할 수강생 상태 status 저장
 
+        String status = inputManager.getStudentStatus();
         List<StudentAverageGrade> studentAverageGrades = scoreService.getAverageGradesByStatusAndSubjectType(status, "MANDATORY");
 
         for (StudentAverageGrade studentAverageGrade : studentAverageGrades) {
