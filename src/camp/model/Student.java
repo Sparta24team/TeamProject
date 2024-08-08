@@ -15,7 +15,14 @@ public class Student {
         this.subjects = subjects;
     }
 
-    // Getter
+    public boolean isSameStudentId(String studentId) {
+        return this.studentId.equals(studentId);
+    }
+
+    public boolean isSameStatus(String status) {
+        return this.status.equals(status);
+    }
+
     public String getStudentId() {
         return studentId;
     }
@@ -24,27 +31,11 @@ public class Student {
         return studentName;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public List<Subject> getSubjects() {
         return subjects;
     }
 
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
-    }
-
     public void setStudentId(String studentId) {
         this.studentId = studentId;
-    }
-
-    public boolean isSameStudentId(String studentId) {
-        return this.studentId.equals(studentId);
-    }
-
-    public boolean isSameStatus(String status) {
-        return this.status.equals(status);
     }
 }

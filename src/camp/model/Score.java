@@ -17,8 +17,24 @@ public class Score {
         this.grade = grade;
     }
 
-    public String getScoreId() {
-        return scoreId;
+    public boolean isSameStudentId(String studentId) {
+        return this.studentId.equals(studentId);
+    }
+
+    public boolean isSameSubjectId(String subjectId) {
+        return this.subjectId.equals(subjectId);
+    }
+
+    public boolean isSameRound(int round) {
+        return this.round == round;
+    }
+
+    public void updateValue(int scoreValue) {
+        this.value = scoreValue;
+    }
+
+    public void updateGrade(String grade) {
+        this.grade = grade;
     }
 
     public int getRound() {
@@ -47,50 +63,6 @@ public class Score {
 
     public void setScoreId(String scoreId) {
         this.scoreId = scoreId;
-    }
-
-    public void setRound(int round) {
-        this.round = round;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-        this.grade = calculateGrade(value);
-    }
-
-    private String calculateGrade(int value) {
-        // 점수에 따른 등급 계산 로직
-        if (value >= 90) {
-            return "A";
-        } else if (value >= 80) {
-            return "B";
-        } else if (value >= 70) {
-            return "C";
-        } else if (value >= 60) {
-            return "D";
-        } else {
-            return "F";
-        }
-    }
-
-    public boolean isSameStudentId(String studentId) {
-        return this.studentId.equals(studentId);
-    }
-
-    public boolean isSameSubjectId(String subjectId) {
-        return this.subjectId.equals(subjectId);
-    }
-
-    public boolean isSameRound(int round) {
-        return this.round == round;
-    }
-
-    public void updateValue(int scoreValue) {
-        this.value = scoreValue;
-    }
-
-    public void updateGrade(String grade) {
-        this.grade = grade;
     }
 }
 

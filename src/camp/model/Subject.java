@@ -11,6 +11,14 @@ public class Subject {
         this.subjectType = subjectType;
     }
 
+    public boolean isSameSubjectId(String subjectId) {
+        return this.subjectId.equals(subjectId);
+    }
+
+    public boolean isSameSubjectType(String subjectType) {
+        return this.subjectType.equals(subjectType);
+    }
+
     public String getSubjectId() {
         return subjectId;
     }
@@ -33,18 +41,5 @@ public class Subject {
 
     public boolean isChoice() {
         return subjectType.equals("CHOICE");
-    }
-
-    @Override
-    public String toString() {
-        return "subjectName: " + subjectName;
-    }
-
-    public boolean isSameSubjectId(String subjectId) {
-        return this.subjectId.equals(subjectId);
-    }
-
-    public boolean isSameSubjectType(String subjectType) {
-        return this.subjectType.equals(subjectType);
     }
 }

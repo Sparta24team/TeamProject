@@ -1,5 +1,6 @@
 package camp;
 
+import camp.application.CampManagementApplication;
 import camp.config.CampManagementApplicationConfig;
 import camp.input.InputManager;
 import camp.service.ScoreService;

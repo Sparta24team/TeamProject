@@ -1,4 +1,4 @@
-package camp;
+package camp.application;
 
 import camp.dto.StudentAverageGrade;
 import camp.dto.SubjectAverageGrade;
@@ -26,13 +26,11 @@ public class CampManagementApplication {
     }
 
     public void run() {
-        while (true) {
-            try {
-                displayMainView();
-            } catch (Exception e) {
-                view.printErrorMessage(e.getMessage());
-                view.printExitProgramMessageOnError();
-            }
+        try {
+            displayMainView();
+        } catch (Exception e) {
+            view.printErrorMessage(e.getMessage());
+            view.printExitProgramMessageOnError();
         }
     }
 
@@ -78,6 +76,7 @@ public class CampManagementApplication {
     }
 
     // 수강생 등록
+
     private void createStudent() {
         view.printCreateStudentMessage();
 
@@ -89,8 +88,8 @@ public class CampManagementApplication {
 
         view.printCreatedStudentMessage();
     }
-
     // 수강생 목록 조회
+
     private void inquireStudents() {
         view.printDividingLine();
         view.printInquireStudentMessage();
@@ -109,7 +108,6 @@ public class CampManagementApplication {
         }
     }
 
-    //1. 866766 / park
     private void displayScoreView() {
         boolean flag = true;
         while (flag) {
@@ -134,6 +132,7 @@ public class CampManagementApplication {
     }
 
     // 수강생의 과목별 시험 회차 및 점수 등록
+
     private void createScore() {
         view.printCreateScoreMessage();
         String studentId = inputManager.getStudentId();
@@ -164,6 +163,7 @@ public class CampManagementApplication {
     }
 
     // 수강생의 과목별 회차 점수 수정     set
+
     private void updateRoundScoreBySubject() {
         view.printDividingLine();
         view.printUpdateScoreMessage();
@@ -179,9 +179,9 @@ public class CampManagementApplication {
         view.printDividingLine();
         view.printUpdatedScoreMessage();
     }
-
     // 수강생의 특정 과목 회차별 등급 조회
     // 코드 순서 변경 : 수강생 ID, 과목 ID 유효성 각각 조회로 변경함
+
     private void inquireRoundGradeBySubject() {
         view.printDividingLine();
         view.printInquireGradeMessage();
@@ -202,8 +202,8 @@ public class CampManagementApplication {
 
         view.printInquiredGradeMessage();
     }
-
     // 수강생의 과목별 평균 등급 조회
+
     private void inquireStudentAverageGrade() {
         view.printDividingLine();
         view.printInquireAverageGradeMessage();
@@ -221,8 +221,8 @@ public class CampManagementApplication {
         }
         view.printInquiredAverageGradeMessage();
     }
-
     // 특정 상태 수강생들의 필수 과목 평균 등급 조회
+
     private void inquireMandatoryGrades() {
         view.printDividingLine();
         view.printInquireAverageGradeFromMandatorySubjectByStatusMessage();
