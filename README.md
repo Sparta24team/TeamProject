@@ -86,7 +86,7 @@ camp
 
 <br><br>
 
-## 프로젝트 구조
+## 컴포넌트 다이어그램
 
 ![title](https://teamsparta.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F83c75a39-3aba-4ba4-a792-7aefe4b07895%2F21a1b188-1ace-4090-bdc4-36a137632bcd%2FUntitled_diagram-2024-08-07-230712.png?table=block&id=b4c60ccd-dc30-4daa-968b-13bdab2e27df&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=2000&userId=&cache=v2)
 
